@@ -1,3 +1,1 @@
-class Main:
-    def __init__():
-        pass
+# import things later
