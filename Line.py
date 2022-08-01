@@ -4,3 +4,4 @@ class Line:
         self.y1 = None
         self.x2 = None
         self.y2 = None
+        self.orient = None
