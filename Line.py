@@ -1,3 +1,6 @@
 class Line:
     def __init__():
-        pass
+        self.x1 = None
+        self.y1 = None
+        self.x2 = None
+        self.y2 = None
