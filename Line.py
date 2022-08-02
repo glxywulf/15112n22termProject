@@ -9,8 +9,8 @@ class Line:
         self.y2 = y2
         
         # check if the line is horizontal or vertical and assigns the line
-        self.isHorizontal = (x1 == x2)
-        self.isVertical = (y1 == y2)
+        self.isHorizontal = (y1 == y2)
+        self.isVertical = (x1 == x2)
         
         # if it's neither horizontal or vertical then it's diagonal
         self.isDiagonal = not (self.isHorizontal or self.isVertical)

@@ -1,10 +1,15 @@
 from cmu_112_graphics import *
 from Line import *
 
-testLine = Line(0, 0, 800, 800)
+
+def appStarted(app):
+    app.height = 820
+    app.width = 1180
 
 def redrawAll(app, canvas):
+    testLine = Line(0, app.height - 100, app.width, app.height - 100)
+    
     testLine.drawLine(app, canvas)
     
-    
-runApp(width = 800, height = 800)
+
+runApp(width = 1180, height = 820)
