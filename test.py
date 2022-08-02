@@ -1,11 +1,10 @@
-print("Hello World")
+from cmu_112_graphics import *
+from Line import *
 
-print("changes hello")
+testLine = Line(0, 0, 800, 800)
 
-print("solidifying the practice into memory")
-
-print("and understand how to save to github")
-
-print("just making a couple changes to see if I've got the handle of it")
-
-print("ok promise this is the last check")
+def redrawAll(app, canvas):
+    testLine.drawLine(app, canvas)
+    
+    
+runApp(width = 800, height = 800)
