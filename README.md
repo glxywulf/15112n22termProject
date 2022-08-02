@@ -8,3 +8,5 @@ either one of those, it will be denoted as diagonal.
 
 We now have a player figure drawn and mapped onto the canvas. Need to work on 
 collision and physics tomorrow. 
+
+Ok, stayed up late and got horizontal movement working. Work on physics tomorrow
