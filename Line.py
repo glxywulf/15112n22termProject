@@ -25,3 +25,6 @@ class Line:
             return 2
         else:
             return 3
+        
+    def checkCollision(self, x, y):
+        return 42

@@ -14,7 +14,7 @@ def appStarted(app):
     
     # set default walk speed for player
     app.timerDelay = 10
-    app.walkSpeed = 5
+    app.walkSpeed = 4
     
 # Controller ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -30,6 +30,7 @@ def keyReleased(app, event):
         
 def timerFired(app):
     app.player.movePlayer()
+    app.player.applyGravity()
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

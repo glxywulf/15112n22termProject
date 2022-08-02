@@ -1,4 +1,5 @@
 from cmu_112_graphics import *
+from Line import *
 
 class Player:    
     def __init__(self):
@@ -16,6 +17,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.ddy = 0
+        self.gravity = 1
         self.onGround = False
         
     def drawPlayer(self, app, canvas):
@@ -34,4 +36,10 @@ class Player:
     def movePlayer(self):
         self.cx += self.dx
         self.cy += self.dy
+        
+    def applyGravity(self):
+        if not(self.onGround):
+            self.dy = self.gravity
+        else:
+            self.dy = 0
         

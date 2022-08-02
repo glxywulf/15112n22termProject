@@ -10,3 +10,16 @@ We now have a player figure drawn and mapped onto the canvas. Need to work on
 collision and physics tomorrow. 
 
 Ok, stayed up late and got horizontal movement working. Work on physics tomorrow
+
+Specifically let's get gravity working. For now, we just need to get the 
+concept of gravity working inside of the window. We shouldn't worry about window
+borders at the moment or even later as we should avoid window borders.
+
+We need to avoid those borders because of the fact that the player needs to be 
+able to seamlessly shift between levels by going either above the window top or 
+bottom.
+
+You left off at making gravity a thing. Last point you were at you made the 
+gravity point upward. -- Nevermind, you were just dumb and though -y was down. 
+Which it is technically. But not here.
+
