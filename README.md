@@ -23,3 +23,7 @@ You left off at making gravity a thing. Last point you were at you made the
 gravity point upward. -- Nevermind, you were just dumb and though -y was down. 
 Which it is technically. But not here.
 
+Ok we have bottom collisions working, next we should work on left and right
+
+Last thing you were working on was vertical line collision. Has the problem of
+sticking to any vertical line present.

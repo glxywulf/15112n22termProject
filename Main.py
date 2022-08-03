@@ -12,6 +12,12 @@ def appStarted(app):
     # make the plaer
     app.player = Player()
     
+    # keep track of all the lines
+    app.lines = []
+    app.lines.append(Line(0, app.height - 100, app.width, app.height - 100))
+    app.lines.append(Line(200, 0, 200, app.height))    
+    app.lines.append(Line(app.width - 200, 0, app.width - 200, app.height))
+        
     # set default walk speed for player
     app.timerDelay = 10
     app.walkSpeed = 4
@@ -35,9 +41,8 @@ def timerFired(app):
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
-    testLine = Line(0, app.height - 100, app.width, app.height - 100)
-    
-    testLine.drawLine(app, canvas)
+    for i in range(len(app.lines)):
+        app.lines[i].drawLine(app, canvas)
     app.player.drawPlayer(app, canvas)
     
     

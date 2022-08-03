@@ -29,14 +29,18 @@ class Player:
                                 self.cy + (self.height / 2),
                                 fill = 'red')
         
+    # just a helper to set the player's deltas via keyPressed
     def setDeltas(self, dx, dy):
         self.dx = dx
         self.dy = dy
     
+    # apply the deltas to the players center point
     def movePlayer(self):
         self.cx += self.dx
         self.cy += self.dy
         
+    # apply gravity on the player. finished initial velocity
+    # TODO adjust this to incorporate acceleration as well after collision
     def applyGravity(self):
         if not(self.onGround):
             self.dy = self.gravity

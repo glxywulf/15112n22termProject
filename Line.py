@@ -1,4 +1,5 @@
 from cmu_112_graphics import *
+from Player import *
 
 class Line:
     def __init__(self, x1, y1, x2, y2):
@@ -26,5 +27,6 @@ class Line:
         else:
             return 3
         
-    def checkCollision(self, x, y):
+    # TODO make collision logic
+    def checkCollision(self, player):
         return 42
