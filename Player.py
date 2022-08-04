@@ -9,15 +9,15 @@ class Player:
         
         # start position, player width and height
         self.cx = (width / 2)
-        self.cy = (height - 500)
+        self.cy = (height - 300)
         self.width = 50
         self.height = 65
         
         # movement deltas
         self.dx = 0
         self.dy = 0
-        self.ddy = .6
-        self.gravity = .6
+        self.ddy = 0
+        self.gravity = 1
         self.onGround = False
         
     def drawPlayer(self, app, canvas):
@@ -90,26 +90,41 @@ class Player:
             x2 = line.x2
             y2 = line.y2
             
-            # top left corner
+            # top left corner coords
             topLeftX = self.cx
             topLeftY = self.cy
 
-            # top right corner
+            # top right corner coords
             topRightX = self.cx + self.width
             topRightY = self.cy
 
-            # bottom left corner
+            # bottom left corner coords
             botLeftX = self.cx
             botLeftY = self.cy + self.height
 
-            # bottom right corner
+            # bottom right corner coords
             botRightX = self.cx + self.width
             botRightY = self.cy + self.height
+            
+            # check line collisions of player bottom
+            left = checkLineLine(topLeftX, topLeftY, botLeftX, botLeftY, x1, y1, x2, y2)
+
+            # check line collisions of player bottom
+            right = checkLineLine(topRightX, topRightY, botRightX, botRightY, x1, y1, x2, y2)
+
+            # check line collisions of player bottom
+            top = checkLineLine(topLeftX, topLeftY, topRightX, topRightY, x1, y1, x2, y2)
+
+            # check line collisions of player bottom
+            bottom = checkLineLine(bottomLeftX, bottomLeftY, bottomRightX, bottomRightY, x1, y1, x2, y2)
+            
+            # ? We'll need something that keeps track of a line's collisions huh...
+            
         
     # function to check if lines are colliding with each other based on points
     # of lines and points of player using some math formulas
     # TODO paste citation stuff
-    def areLinesColliding(self, x1, y1, x2, y2, x3, y3, x4, y4):  
+    def checkLineLine(self, x1, y1, x2, y2, x3, y3, x4, y4):  
         uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))      
         uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
         
