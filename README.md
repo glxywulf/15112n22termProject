@@ -29,4 +29,9 @@ Last thing you were working on was vertical line collision. Has the problem of
 sticking to any vertical line present.
 
 Currently stuck at a divide by 0 thing. test it out in test.py to see where
-the issue is
+the issue is. 
+
+Issue was that the collision thing from Jeff only works with diagonals since 
+if the line were vertical or horizontal it causes a scenario where the equation
+he provided gave us a divisor of 0. Hence pulling a divide by 0 error.
+

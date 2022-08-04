@@ -14,9 +14,12 @@ def appStarted(app):
     
     # keep track of all the lines
     app.lines = []
+    app.lines.append(Line(0, 100, app.width, 100))
     app.lines.append(Line(0, app.height - 100, app.width, app.height - 100)) #horiz
     # app.lines.append(Line(200, 0, 200, app.height))
     # app.lines.append(Line(app.width - 200, 0, app.width - 200, app.height))
+    
+    # app.lines.append(Line(0,0,app.width,app.height)) #diag
         
     # set default walk speed for player
     app.timerDelay = 10
@@ -30,7 +33,8 @@ def keyPressed(app, event):
     elif(event.key == 'Right'):
         app.player.setDeltas(app.walkSpeed, 0)
     elif(event.key == 'Space'):
-        app.player.setDeltas(0, app.walkSpeed)
+        app.player.onGround = False
+        app.player.setDeltas(0, -app.walkSpeed)
         
     # debug
     elif(event.key == 'r'):

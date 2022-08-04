@@ -51,44 +51,84 @@ class Player:
             self.dy = 0
 
     # TODO paste citation stuff and continue work on collision
-    def isColliding(self, line):        
-        # line coords
-        x1 = line.x1
-        y1 = line.y1
-        x2 = line.x2
-        y2 = line.y2
+    def isColliding(self, line):
+        # if the line is horizontal
+        # TODO keep tweaking horizontal collision because it only kinda works
+        # ! Any collision with horizontal lines causes the bottom of the player to snap to the collided line 
+        if(line.isHorizontal):
+            isPlayerCloseX = ((line.x1 < self.cx and self.cx < line.x2) or 
+                              (line.x1 < self.cx + self.width and self.cx + self.width < line.x2) or 
+                              (self.cx < line.x1 and line.x1 < self.cx + self.width) or 
+                              (self.cx < line.x2 and line.x2 < self.cx + self.width))
+            isPlayerCloseY = self.cy < line.y1 and line.y1 < self.cy + self.height
+            
+            if (isPlayerCloseX and isPlayerCloseY):
+                self.onGround = True
+                self.cy = line.y1 - self.height
         
-        # player left coords
-        lx1, ly1, lx2, ly2 = (self.cx, self.cy, self.cx, self.cy + self.height)
+        # if the line is vertical
+        # TODO after you're done with horizontal, apply similar logic to vertical lines
+        # ! same issue as horizontal lines
+        elif(line.isVertical):
+            isPlayerCloseY = ((line.y1 < self.cy and self.cy < line.y2) or 
+                              (line.y1 < self.cy + self.height and self.cy + self.height < line.y2) or 
+                              (self.cy < line.y1 and line.y1 < self.cy + self.height) or 
+                              (self.cy < line.y2 and line.y2 < self.cy + self.height))
+            isPlayerCloseX = self.cx < line.x1 and line.x1 < self.cx + self.width
+            
+            if(isPlayerCloseY and (self.cx > line.x1)):
+                # print(self.cx, line.x1, line.x2)
+                # print(isPlayerCloseX, isPlayerCloseY)
+                
+                self.cx = line.x1
+            
+            elif(isPlayerCloseY and (line.x1 > self.cx + self.width)):
+                # print(self.cx, line.x1, line.x2)
+                # print(isPlayerCloseX, isPlayerCloseY)
+                
+                self.cx = line.x1 - self.width
         
-        # player right coords
-        rx1, ry1, rx2, ry2 = (self.cx + self.width, self.cy, self.cx + self.width, self.cy + self.height)
-        
-        # player top coords
-        tx1, ty1, tx2, ty2 = (self.cx, self.cy, self.cx + self.width, self.cy)
-        
-        # player bottom coords
-        bx1, by1, bx2, by2 = (self.cx, self.cy + self.height, self.cx + self.width, self.cy + self.height)
-        
-        if(self.areLinesColliding(x1, y1, x2, y2, bx1, by1, bx2, by2)[0]):
-            self.onGround = True
-            self.cy = y1 - self.height
-        
+        # if the line is diagonal
+        # TODO finish diagonal logic
+        else:
+            # line coords
+            x1 = line.x1
+            y1 = line.y1
+            x2 = line.x2
+            y2 = line.y2
+            
+            # top left corner
+            topLeftX = self.cx
+            topLeftY = self.cy
+
+            # top right corner
+            topRightX = self.cx + self.width
+            topRightY = self.cy
+
+            # bottom left corner
+            botLeftX = self.cx
+            botLeftY = self.cy + self.height
+
+            # bottom right corner
+            botRightX = self.cx + self.width
+            botRightY = self.cy + self.height
+            
+            # TODO keep working on collision shit
+            if(self.areLinesColliding(botLeftX, botLeftY, botRightX, botRightY, x1, y1, x2, y2)[0]):
+                self.onGround = True
+                self.cy = y1 - self.height
         
     # function to check if lines are colliding with each other based on points
     # of lines and points of player
     # TODO paste citation stuff
-    def areLinesColliding(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        if(((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)) == 0):
-            uA = 42
-            uB = 42
-        else:
-            uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
-            uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
+    # TODO keep fucking around with the collision logic
+    def areLinesColliding(self, x1, y1, x2, y2, x3, y3, x4, y4):  
+        uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))      
+        uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
         
         if((uA >= 0 and uA <= 1) and (uB >= 0 and uB <= 1)):
-            intersectionX = x1 + (uA * (x2 - x1))
-            intersectionY = y1 + (uA * (y2 - y1))
-            return [True, intersectionX, intersectionY]
+            interX = x1 + (uA * (x2 - x1))
+            interY = y1 + (uA * (y2 - y1))
+            return [True, interX, interY]
         
         return [False, 0, 0]
