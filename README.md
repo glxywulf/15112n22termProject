@@ -27,3 +27,6 @@ Ok we have bottom collisions working, next we should work on left and right
 
 Last thing you were working on was vertical line collision. Has the problem of
 sticking to any vertical line present.
+
+Currently stuck at a divide by 0 thing. test it out in test.py to see where
+the issue is

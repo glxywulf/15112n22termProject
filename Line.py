@@ -19,14 +19,14 @@ class Line:
     def drawLine(self, app, canvas):
         canvas.create_line(self.x1, self.y1, self.x2, self.y2, width = 3)
         
-    def checkLineOrient(self):
-        if(self.isHorizontal):
-            return 1
-        elif(self.isVertical):
-            return 2
-        else:
-            return 3
-        
     # TODO make collision logic
-    def checkCollision(self, player):
-        return 42
+    def checkLineLine(self, x1, y1, x2, y2, x3, y3, x4, y4):
+        # ! somehow dividing by 0. check it out when you can
+        
+        uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
+        uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
+        
+        if((uA >= 0 and uA <= 1) and (uB >= 0 and uB <= 1)):
+            return True
+        else:
+            return False
