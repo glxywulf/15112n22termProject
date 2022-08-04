@@ -1,98 +1,150 @@
-# x1,x2,x3,x4,y1,y2,y3,y4 = 980,980,640,640,0,820,620,685
+# from cmu_112_graphics import *
+# from Line import *
 
-# print(((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)))
-
-# def checkCollision(self, player):
-#         # line coords
-#         x1 = self.x1
-#         y1 = self.y1
-#         x2 = self.x2
-#         y2 = self.y2
+# class Player:    
+#     def __init__(self):
+#         # app dimensions
+#         width = 1180
+#         height = 820
         
-#         # player line coords
-#         # player's left
-#         lx1, ly1, lx2, ly2 = (player.cx,
-#                               player.cy,
-#                               player.cx,
-#                               player.cy + (player.height // 2))
+#         # start position, player width and height
+#         self.cx = (width / 2)
+#         self.cy = (height - 500)
+#         self.width = 50
+#         self.height = 65
         
-#         # player's right
-#         rx1, ry1, rx2, ry2 = (player.cx + player.width,
-#                               player.cy,
-#                               player.cx + player.width,
-#                               player.cy + player.height)
+#         # movement deltas
+#         self.dx = 0
+#         self.dy = 0
+#         self.ddy = .6
+#         self.gravity = .6
+#         self.onGround = False
         
-#         # player's top
-#         tx1, ty1, tx2, ty2 = (player.cx,
-#                               player.cy,
-#                               player.cx + player.width,
-#                               player.cy)
+#     def drawPlayer(self, app, canvas):
+#         # draw the player
+#         # TODO eventually insert the actual player model from the game
+#         canvas.create_rectangle(self.cx, 
+#                                 self.cy,
+#                                 self.cx + self.width, 
+#                                 self.cy + self.height,
+#                                 fill = 'red')
         
-#         # player's bottom
-#         bx1, by1, bx2, by2 = (player.cx,
-#                               player.cy + player.height,
-#                               player.cx + player.width,
-#                               player.cy + player.height)
+#     # just a helper to set the player's deltas via keyPressed
+#     def setDeltas(self, dx, dy):
+#         self.dx = dx
+#         self.dy = dy
+    
+#     # apply the deltas to the players center point
+#     def movePlayer(self):
+#         self.cx += self.dx
+#         self.cy += self.dy
         
-#         # check if player has collided with any lines
-#         # left
-#         hitLeft = self.checkLineLine(x1, y1, x2, y2, lx1, ly1, lx2, ly2)
-        
-#         # right
-#         hitRight = self.checkLineLine(x1, y1, x2, y2, rx1, ry1, rx2, ry2)
-        
-#         # top
-#         hitTop = self.checkLineLine(x1, y1, x2, y2, tx1, ty1, tx2, ty2)
-        
-#         # bottom
-#         hitBottom = self.checkLineLine(x1, y1, x2, y2, bx1, by1, bx2, by2)
-        
-#         if(hitLeft):
-#             pass
-#         elif(hitRight):
-#             pass
-#         elif(hitTop):
-#             pass
-#         elif(hitBottom):
-#             player.onGround = True
-#             player.cy = self.y1 - player.height
+#     # apply gravity on the player. finished initial velocity
+#     # TODO adjust self to incorporate acceleration as well after collision
+#     def applyGravity(self):
+#         # check if player is on a "ground" 
+#         if not(self.onGround):
+#             # if not, apply a gravity constant on the dy
+#             self.dy = self.gravity
             
+#             # TODO add this back in when you finish getting the collision working
+#             # ? keep tinkering with the specific values
+#             # if(self.dy < 20):
+#             #     self.gravity = self.gravity + (self.gravity * self.ddy)
+#             # else:
+#             #     self.dy = 20
             
-            
-            
-            
-            
-            
-            
-#             # check if line is horizontal
-#         if(line.isHorizontal):
-#             # see if the player is within the x of any line
-#             interX = ((line.x1 < self.cx and self.cx < line.x2) or
-#                       (line.x1 < self.cx + self.width and 
-#                        self.cx + self.width < line.x2) or 
-#                       (self.cx < line.x1 and  line.x1 < self.cx + self.width) or
-#                       (self.cx < line.x2 and line.x2 <  self.cx + self.width))
-            
-#             # see if the player is within the y of any line
-#             interY = self.cy < line.y1 and line.y1 < self.cy + self.height
-            
-#             # if both are true, we're colliding with something
-#             return interX and interY
-        
-#         # check if line is vertical
-#         elif(line.isVertical):
-#             # see if the player is within the y of any line
-#             interY = ((line.y1 < self.cy and self.cy < line.y2) or 
-#                       (line.y1 < self.cy + self.height and 
-#                        self.cy + self.height < line.y2) or 
-#                       (self.cy < line.y1 and line.y1 < self.cy + self.height) or
-#                       (self.cy < line.y2 and line.y2 < self.cy + self.height))
-#             # see if the player is within the x of any line
-#             interX = self.cx < line.x1 and line.x1 < self.cx + self.width
-            
-#             # if both are true, we're colliding with something
-#             return interY and interX
-        
-#         # if it's neither, then it's diagonal
+#         # otherwise, set dy to 0
 #         else:
-#             pass
+#             self.dy = 0
+
+#     # TODO paste citation stuff and continue work on collision
+#     # TODO write up the collision stuff in the first place
+    
+#     def isColliding(self, line): # ? check code bullets IsCollidingWithLine function in Player class
+#         # if the line is horizontal
+#         # TODO keep tweaking horizontal collision because it only kinda works
+#         # ! Any collision with horizontal lines causes the bottom of the player to snap to the collided line 
+#         if(line.isHorizontal):
+#             isPlayerCloseX = ((line.x1 < self.cx and self.cx < line.x2) or 
+#                               (line.x1 < self.cx + self.width and self.cx + self.width < line.x2) or 
+#                               (self.cx < line.x1 and line.x1 < self.cx + self.width) or 
+#                               (self.cx < line.x2 and line.x2 < self.cx + self.width))
+#             isPlayerCloseY = self.cy < line.y1 and line.y1 < self.cy + self.height
+            
+#             return (isPlayerCloseX and isPlayerCloseY)
+            
+#             # * tried this, didn't work, trying something else
+#             # if(isPlayerCloseX and isPlayerCloseY):
+#             #     if(self.cy > line.y1):
+#             #         self.dy = -self.dy
+#             #         return None
+#             #     elif(self.cy + self.height > line.y1):
+#             #         self.onGround = True
+#             #         self.cy = line.y1 - self.height
+#             #         return None
+        
+#         # if the line is vertical
+#         # TODO after you're done with horizontal, apply similar logic to vertical lines
+#         # ! same issue as horizontal lines
+#         elif(line.isVertical):
+#             isPlayerCloseY = ((line.y1 < self.cy and self.cy < line.y2) or 
+#                               (line.y1 < self.cy + self.height and self.cy + self.height < line.y2) or 
+#                               (self.cy < line.y1 and line.y1 < self.cy + self.height) or 
+#                               (self.cy < line.y2 and line.y2 < self.cy + self.height))
+#             isPlayerCloseX = self.cx < line.x1 and line.x1 < self.cx + self.width
+            
+#             return (isPlayerCloseX and isPlayerCloseY)
+            
+#             # * tried this, didn't work, trying something else
+#             # if(isPlayerCloseY and (self.cx > line.x1)):
+#             #     # print(self.cx, line.x1, line.x2)
+#             #     # print(isPlayerCloseX, isPlayerCloseY)
+                
+#             #     self.cx = line.x1
+            
+#             # elif(isPlayerCloseY and (line.x1 > self.cx + self.width)):
+#             #     # print(self.cx, line.x1, line.x2)
+#             #     # print(isPlayerCloseX, isPlayerCloseY)
+                
+#             #     self.cx = line.x1 - self.width
+        
+#         # if the line is diagonal
+#         # TODO figure out collision shit
+#         else:
+#             # line coords
+#             x1 = line.x1
+#             y1 = line.y1
+#             x2 = line.x2
+#             y2 = line.y2
+            
+#             # top left corner
+#             topLeftX = self.cx
+#             topLeftY = self.cy
+
+#             # top right corner
+#             topRightX = self.cx + self.width
+#             topRightY = self.cy
+
+#             # bottom left corner
+#             botLeftX = self.cx
+#             botLeftY = self.cy + self.height
+
+#             # bottom right corner
+#             botRightX = self.cx + self.width
+#             botRightY = self.cy + self.height
+        
+#     # function to check if lines are colliding with each other based on points
+#     # of lines and points of player
+#     # TODO paste citation stuff
+#     # TODO keep fucking around with the collision logic
+#     def areLinesColliding(self, x1, y1, x2, y2, x3, y3, x4, y4):  
+#         uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))      
+#         uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+        
+#         if((uA >= 0 and uA <= 1) and (uB >= 0 and uB <= 1)):
+#             interX = x1 + (uA * (x2 - x1))
+#             interY = y1 + (uA * (y2 - y1))
+#             return [True, interX, interY]
+        
+#         return [False, 0, 0]

@@ -14,11 +14,16 @@ def appStarted(app):
     
     # keep track of all the lines
     app.lines = []
+    
+    # horizontal pair
     app.lines.append(Line(0, 100, app.width, 100))
     app.lines.append(Line(0, app.height - 100, app.width, app.height - 100)) #horiz
+    
+    # vertical pair
     # app.lines.append(Line(200, 0, 200, app.height))
     # app.lines.append(Line(app.width - 200, 0, app.width - 200, app.height))
     
+    # diagonal line
     # app.lines.append(Line(0,0,app.width,app.height)) #diag
         
     # set default walk speed for player
