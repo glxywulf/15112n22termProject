@@ -1,3 +1,11 @@
+
+# TODO paste citation stuff
+
 class Collision:
     def __init__(self):
-        return 42
+        self.collidedPoints = []
+        
+        self.collidedLeft = False
+        self.collidedRight = False
+        self.collidedTop = False
+        self.collidedBottom = False

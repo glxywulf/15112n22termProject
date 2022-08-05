@@ -50,8 +50,7 @@ def keyReleased(app, event):
         app.player.setDeltas(0, 0)
         
 def timerFired(app):
-    for line in app.lines:
-        app.player.isColliding(line)
+    app.player.checkCollision(app.lines)
     app.player.movePlayer()
     app.player.applyGravity()
     
