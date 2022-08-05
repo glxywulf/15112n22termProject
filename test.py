@@ -391,6 +391,34 @@
     
     
     
-import sys
-print(f'"{sys.executable}" -m pip install pillow')
-print(f'"{sys.executable}" -m pip install requests')
+# import sys
+# print(f'"{sys.executable}" -m pip install pillow')
+# print(f'"{sys.executable}" -m pip install requests')
+
+
+
+# for line in lines:
+#             if(line.isHorizontal):
+#                 if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2)):
+#                     if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
+#                         self.onGround = True
+#                         self.cy = line.y1 - self.height
+#                     elif(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
+#                         self.cy = line.y1
+#                         self.dy = -self.dy
+#                 else:
+#                     self.onGround = False
+#             elif(line.isVertical):
+#                 if((topY >= line.y1 and topY <= line.y2) or (bottomY >= line.y1 and bottomY <= line.y2)):
+#                     if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
+#                         if(self.onGround):
+#                             self.cx = line.x1 - self.width
+#                         else:
+#                             self.cx = line.x1 - self.width
+#                             self.dx = -self.dx
+#                 elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
+#                     if(self.onGround):
+#                         self.cx = line.x1
+#                     else:
+#                         self.cx = line.x1
+#                         self.dx = -self.dx
