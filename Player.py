@@ -23,8 +23,12 @@ class Player:
         # player physics numbers and stuff
         self.minVertJump = 5
         self.maxVertJump = 22
+        self.vertJumpSpeed = self.minVertJump
         self.horiJumpSpeed = 8
         self.termVel = 20
+        self.squatting = False
+        self.jumpRight = False
+        self.jumpLeft = False
         
     def drawPlayer(self, app, canvas):
         # draw the player
@@ -120,12 +124,26 @@ class Player:
                         self.onGround = True
                         self.dy = 0
                         self.cy = line.y1 - self.height
+                        
+                        if(self.jumpLeft):
+                            self.jumpLeft = False
+                            self.dx = 0
+                        elif(self.jumpRight):
+                            self.jumpRight = False
+                            self.dx = 0
                     
                     # check if the top has collided with a horizontal line
                     elif(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
                         # in that case, snap the top to the line and reverse its upward velocity
                         self.cy = line.y1
                         self.dy = -self.dy
+                        
+                        if(self.jumpLeft):
+                            self.jumpLeft = False
+                            self.dx = 0
+                        elif(self.jumpRight):
+                            self.jumpRight = False
+                            self.dx = 0
                 
                 # if the player isn't within the horizontal lines length
                 else:
@@ -166,5 +184,12 @@ class Player:
                 pass
             
     def jump(self):
-        self.dy = -self.maxVertJump
+        self.dy = -self.vertJumpSpeed
+        self.squatting = False
         
+        if(self.jumpRight):
+            self.dx = self.horiJumpSpeed
+        elif(self.jumpLeft):
+            self.dx = -self.horiJumpSpeed
+        else:
+            self.dx = 0

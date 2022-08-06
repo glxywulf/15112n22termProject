@@ -53,25 +53,39 @@ def appStarted(app):
 # Controller ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def keyPressed(app, event):
-    if(event.key == 'Left'):
-        app.player.setDeltas(-app.walkSpeed, 0)
-    elif(event.key == 'Right'):
-        app.player.setDeltas(app.walkSpeed, 0)
-    elif(event.key == 'Space'):
+    if(app.player.onGround and not app.player.squatting):
+        if(event.key == 'Left'):
+            app.player.setDeltas(-app.walkSpeed, 0)
+        elif(event.key == 'Right'):
+            app.player.setDeltas(app.walkSpeed, 0)
+    elif(app.player.onGround and app.player.squatting):
+        if(event.key == 'Left'):
+            app.player.jumpLeft = True
+        elif(event.key == 'Right'):
+            app.player.jumpRight = True
+    if(event.key == 'Space'):
         if(app.player.onGround):
-            app.player.jump()
-            app.player.onGround = False
+            app.player.squatting = True
+            if(app.player.vertJumpSpeed < app.player.maxVertJump):
+                app.player.vertJumpSpeed += 2
         else:
-            pass
+            return 42
         
     # debug
     elif(event.key == 'r'):
         appStarted(app)
         
 def keyReleased(app, event):
-    if(event):
-        app.player.setDeltas(0, 0)
-        
+    if(event.key == 'Space' and app.player.onGround):
+        app.player.jump()
+        app.player.onGround = False
+        app.player.vertJumpSpeed = app.player.minVertJump
+    if(app.player.onGround):
+        if(event.key == 'Right'):
+            app.player.setDeltas(0, 0)
+        elif(event.key == 'Left'):
+            app.player.setDeltas(0, 0)
+    
 def timerFired(app):
     app.player.checkCollisions(app.lines)
     app.player.movePlayer()

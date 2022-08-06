@@ -37,3 +37,5 @@ he provided gave us a divisor of 0. Hence pulling a divide by 0 error.
 
 Ok, got collision working 80%ish kinda, uhh, work on jump function when you get 
 back ok thankyou.
+
+WE GOT JUMP WORKING WHOOOOOO
