@@ -39,3 +39,7 @@ Ok, got collision working 80%ish kinda, uhh, work on jump function when you get
 back ok thankyou.
 
 WE GOT JUMP WORKING WHOOOOOO
+
+Now we have to fix the weird as heck horizontal line floaty phenomenon thingy. 
+
+Then we need to figure how the heck we can get line priority.

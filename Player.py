@@ -33,12 +33,20 @@ class Player:
     def drawPlayer(self, app, canvas):
         # draw the player
         # TODO eventually insert the actual player model from the game
-        canvas.create_rectangle(self.cx, 
-                                self.cy,
-                                self.cx + self.width, 
-                                self.cy + self.height,
-                                fill = 'red')
-        # canvas.create_image(self.cx + (self.width / 2), self.cy + self.height, image = ImageTk.PhotoImage(app.playImage), anchor = 's')
+        if not(self.squatting):
+            canvas.create_rectangle(self.cx, 
+                                    self.cy,
+                                    self.cx + self.width, 
+                                    self.cy + self.height,
+                                    fill = 'red')
+            # canvas.create_image(self.cx + self.width / 2, self.cy + self.height, 
+            #                     image = ImageTk.PhotoImage(app.avatar), anchor = 's')
+        else:
+            canvas.create_rectangle(self.cx,
+                                    self.cy + (self.height / 2),
+                                    self.cx + self.width,
+                                    self.cy + self.height,
+                                    fill = 'red')
         
     # just a helper to set the player's deltas via keyPressed
     def setDeltas(self, dx, dy):
@@ -62,7 +70,6 @@ class Player:
         # otherwise, set dy to 0
         else:
             self.dy = 0
-            self.onGround = True
 
     # TODO paste citation stuff and continue work on collision
     # TODO write up the collision stuff 
@@ -122,32 +129,32 @@ class Player:
                     if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
                         # set onGround to True if it has and snap the bottom to the line
                         self.onGround = True
-                        self.dy = 0
                         self.cy = line.y1 - self.height
                         
                         if(self.jumpLeft):
                             self.jumpLeft = False
-                            self.dx = 0
+                            self.cy = line.y1 - self.height
                         elif(self.jumpRight):
                             self.jumpRight = False
-                            self.dx = 0
+                            self.cy = line.y1 - self.height
+                            
+                        self.dx = 0
+                        self.dy = 0
                     
                     # check if the top has collided with a horizontal line
-                    elif(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
+                    if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
                         # in that case, snap the top to the line and reverse its upward velocity
                         self.cy = line.y1
                         self.dy = -self.dy
                         
                         if(self.jumpLeft):
                             self.jumpLeft = False
-                            self.dx = 0
                         elif(self.jumpRight):
                             self.jumpRight = False
-                            self.dx = 0
-                
+                                            
                 # if the player isn't within the horizontal lines length
                 else:
-                    pass # ? maybe somthing here so just have it here
+                    self.checkMoveOffLine(lines)
             
             # or if it's vertical
             elif(line.isVertical):
@@ -160,12 +167,12 @@ class Player:
                             # then simply snap the player's right to the line
                             self.cx = line.x1 - self.width
                         
-                        # if we're falling
+                        # if we're falling or jumping
                         else:
                             # reverse the horizontal velocity after snapping the
                             # player's right to the line
                             self.cx = line.x1 - self.width
-                            self.dx = -self.dx
+                            self.dx = -(self.dx / 2)
                             
                     # same thing as above except for the left side of the player
                     elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
@@ -176,13 +183,51 @@ class Player:
                         # otherwise, reverse hori velocity and snap to the line
                         else:
                             self.cx = line.x1
-                            self.dx = -self.dx
+                            self.dx = -(self.dx / 2)
             
             # TODO figure out how to do diagonal sorting
             # ? take into consideration corner point to diagonal line point thing prof mentioned
             else:
                 pass
+    
+    # checks if the player has moves off of the current horizontal line that it is resting on
+    def checkMoveOffLine(self, lines):
+        # first check if player is on the ground, if so run the check
+        if(self.onGround):
+            # set a temp variable which will hold what line the player is currently on
+            onLine = None
             
+            # loop through all of the lines
+            for line in lines:
+                # if the line is horizontal and it's y is == the y of the bottom of the player
+                if(line.isHorizontal and line.y1 == (self.cy + self.height)):
+                    # set onLine to be that line
+                    onLine = line
+                    
+                    # initialize varibles that know the x position of the left and right of the player
+                    left = self.cx        
+                    right = self.cx + self.width
+                    
+                    # check that onLine isn't None
+                    if(onLine != None):
+                        # if the player is off of the line, set onGround to False
+                        if((left > onLine.x2 and right > onLine.x2) or (left < onLine.x1 and right < onLine.x1)):
+                            self.onGround = False
+                        
+                        # otherwise, onGround should be True and snap the player to the line
+                        else:
+                            self.cy = onLine.y1 - self.height
+                            self.onGround = True
+                            
+                            # break the for loop here so if doesn't accidentally
+                            # set onLine to a different line
+                            break
+                    
+                    # if online is None, make sure onGround is False since we're not on a line
+                    else:
+                        self.onGround = False
+
+    
     def jump(self):
         self.dy = -self.vertJumpSpeed
         self.squatting = False

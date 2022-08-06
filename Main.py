@@ -17,6 +17,7 @@ def appStarted(app):
     app.lines = []
     
     # test first level stuff
+    # ? Also you prolly have to edit each one of the lines in order to make sure y1 < y2
     app.lines.append(Line(20, 0, 20, 460))
     app.lines.append(Line(20, 460, 320, 460))
     app.lines.append(Line(320, 460, 320, 820))
@@ -31,20 +32,7 @@ def appStarted(app):
     
     # test image stuffs
     app.image1 = app.loadImage('lvlImages/1.png')
-    app.playImage = app.loadImage('idle.png')
-    
-    # * testing lines-------------------------------
-    # horizontal pair
-    # app.lines.append(Line(0, 100, app.width, 100))
-    # app.lines.append(Line(0, app.height - 100, app.width, app.height - 100)) #horiz
-    
-    # vertical pair
-    # app.lines.append(Line(200, 0, 200, app.height))
-    # app.lines.append(Line(app.width - 200, 0, app.width - 200, app.height))
-    
-    # diagonal line
-    # app.lines.append(Line(0,0,app.width,app.height)) #diag
-    # * testing lines-------------------------------
+    app.avatar = app.loadImage('playerStuff/idle.png')
         
     # set default walk speed for player
     app.timerDelay = 10
@@ -65,9 +53,10 @@ def keyPressed(app, event):
             app.player.jumpRight = True
     if(event.key == 'Space'):
         if(app.player.onGround):
+            app.player.setDeltas(0, 0)
             app.player.squatting = True
             if(app.player.vertJumpSpeed < app.player.maxVertJump):
-                app.player.vertJumpSpeed += 2
+                app.player.vertJumpSpeed += 1
         else:
             return 42
         
@@ -82,8 +71,10 @@ def keyReleased(app, event):
         app.player.vertJumpSpeed = app.player.minVertJump
     if(app.player.onGround):
         if(event.key == 'Right'):
+            app.player.jumpRight = False
             app.player.setDeltas(0, 0)
         elif(event.key == 'Left'):
+            app.player.jumpLeft = False
             app.player.setDeltas(0, 0)
     
 def timerFired(app):
