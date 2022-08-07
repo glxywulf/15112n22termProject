@@ -25,7 +25,7 @@ def appStarted(app):
     # app.levelLines.gameLevelList[app.level - 1].append(Line(400,625,600,425))
     
     # test image stuffs
-    app.image1 = app.loadImage('lvlImages/1.png')
+    app.bgrdImage = app.loadImage('lvlImages/1.png')
     app.avatar = app.loadImage('playerStuff/idle.png')
         
     # set default walk speed for player
@@ -45,6 +45,9 @@ def keyPressed(app, event):
             app.player.jumpLeft = True
         elif(event.key == 'Right'):
             app.player.jumpRight = True
+    if(event.key == 'n' and app.level < len(app.levelLines.gameLevelList)):
+        app.level += 1
+        app.player.onGround = False
     if(event.key == 'Space'):
         if(app.player.onGround):
             app.player.setDeltas(0, 0)
@@ -72,23 +75,27 @@ def keyReleased(app, event):
             app.player.setDeltas(0, 0)
     
 def timerFired(app):
-    if(app.player.changeLevel()[0]):
-        app.level += app.player.changeLevel()[1]
+    app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
+    
+    if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
+        if(app.player.changeLevel()[0]):
+            if(app.player.changeLevel()[1] == -1):
+                app.level += app.player.changeLevel()[1]
+                app.player.cy = 0 - app.player.height
+            elif(app.player.changeLevel()[1] == +1):
+                app.level += app.player.changeLevel()[1]
+                app.player.cy = 850
         
-        if(app.player.changeLevel()[1] == -1 and app.level > 0):
-            app.player.cy = 0 - app.player.height
-        elif(app.player.changeLevel()[1] == +1 and app.level < len(app.levelLines.gameLevelList) - 1):
-            app.player.cy = 850
-            
-    app.player.checkCollisions(app.levelLines.gameLevelList[app.level])
+        app.player.checkCollisions(app.levelLines.gameLevelList[app.level])
     app.player.movePlayer()
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
-    # canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.image1), anchor = 'nw')
-    for line in app.levelLines.gameLevelList[app.level]:
-        line.drawLine(app, canvas)
+    canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')
+    if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
+        for line in app.levelLines.gameLevelList[app.level]:
+            line.drawLine(app, canvas)
     app.player.drawPlayer(app, canvas)
     
     
