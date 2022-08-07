@@ -20,7 +20,7 @@ class LevelSetup:
         levelList.append(Line(460, 220, 740, 220))
         levelList.append(Line(740, 100, 740, 220))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 1))
         
         # level 2
         levelList = []
@@ -48,7 +48,7 @@ class LevelSetup:
         levelList.append(Line(480, 420, 480, 260))
         levelList.append(Line(480, 260, 300, 260))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 2))
         
         # level 3
         levelList = []
@@ -85,7 +85,7 @@ class LevelSetup:
         levelList.append(Line(720, 520, 720, 560))
         levelList.append(Line(720, 560, 480, 560))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 3))
         
         # level 4
         levelList = []
@@ -124,7 +124,7 @@ class LevelSetup:
         levelList.append(Line(820, 40, 860, 40))
         levelList.append(Line(860, 40, 860, 0))
     
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 4))
         
         # level 5
         levelList = []
@@ -173,7 +173,7 @@ class LevelSetup:
         levelList.append(Line(380, 40, 820, 40))
         levelList.append(Line(820, 40, 820, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 5))
         
         # level 6
         levelList = []
@@ -213,7 +213,7 @@ class LevelSetup:
         levelList.append(Line(820, 60, 720, 60))
         levelList.append(Line(720, 60, 720, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 6))
         
         # level 7
         levelList = []
@@ -259,7 +259,7 @@ class LevelSetup:
         levelList.append(Line(520, 640, 520, 600))
         levelList.append(Line(520, 600, 340, 600))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 7))
         
         # level 8
         levelList = []
@@ -292,7 +292,7 @@ class LevelSetup:
         levelList.append(Line(620, 220, 220, 220))
         levelList.append(Line(220, 220, 220, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 8))
         
         # level 9
         levelList = []
@@ -344,7 +344,7 @@ class LevelSetup:
         levelList.append(Line(1060, 320, 1060, 240))
         levelList.append(Line(1060, 240, 980, 240))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 9))
         
         # level 10
         levelList = []
@@ -386,7 +386,7 @@ class LevelSetup:
         levelList.append(Line(500, 120, 380, 120))
         levelList.append(Line(380, 120, 380, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 10))
         
         # level 11
         levelList = []
@@ -456,7 +456,7 @@ class LevelSetup:
         levelList.append(Line(740, 440, 740, 120))
         levelList.append(Line(740, 120, 620, 120))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 120))
         
         # level 12
         levelList = []
@@ -496,7 +496,7 @@ class LevelSetup:
         levelList.append(Line(820, 400, 820, 320))
         levelList.append(Line(820, 320, 740, 320))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 12))
         
         # level 13
         levelList = []
@@ -533,7 +533,7 @@ class LevelSetup:
         levelList.append(Line(940, 400, 940, 280))
         levelList.append(Line(940, 280, 860, 280))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 13))
         
         # level 14
         levelList = []
@@ -560,7 +560,7 @@ class LevelSetup:
         levelList.append(Line(1060, 380, 1060, 340))
         levelList.append(Line(1060, 340, 900, 340))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 14))
         
         # level 15
         levelList = []
@@ -599,7 +599,7 @@ class LevelSetup:
         levelList.append(Line(580, 200, 580, 160))
         levelList.append(Line(20, 280, 20, 380))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 15))
         
         # level 16
         levelList = []
@@ -650,7 +650,7 @@ class LevelSetup:
         levelList.append(Line(460, 380, 460, 420))
         levelList.append(Line(460, 420, 640, 420))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 16))
         
         # level 17
         levelList = []
@@ -695,7 +695,7 @@ class LevelSetup:
         levelList.append(Line(740, 560, 740, 320))
         levelList.append(Line(740, 320, 700, 280))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 17))
         
         # level 18
         levelList = []
@@ -783,7 +783,7 @@ class LevelSetup:
         levelList.append(Line(820, 740, 820, 700))
         levelList.append(Line(820, 700, 620, 700))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 18))
         
         # level 19
         levelList = []
@@ -830,7 +830,7 @@ class LevelSetup:
         levelList.append(Line(440, 200, 440, 140))
         levelList.append(Line(440, 140, 320, 140))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 19))
         
         # level 20
         levelList = []
@@ -869,7 +869,7 @@ class LevelSetup:
         levelList.append(Line(1060, 340, 900, 340))
         levelList.append(Line(900, 340, 1020, 220))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 40))
         
         # level 21
         levelList = []
@@ -909,7 +909,7 @@ class LevelSetup:
         levelList.append(Line(820, 540, 820, 460))
         levelList.append(Line(820, 460, 720, 460))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 21))
         
         # level 22
         levelList = []
@@ -952,7 +952,7 @@ class LevelSetup:
         levelList.append(Line(780, 360, 900, 480))
         levelList.append(Line(900, 480, 640, 480))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 22))
         
         # level 23
         levelList = []
@@ -980,7 +980,7 @@ class LevelSetup:
         levelList.append(Line(80, 560, 80, 540))
         levelList.append(Line(20, 260, 20, 240))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 23))
         
         # level 24
         levelList = []
@@ -1011,7 +1011,7 @@ class LevelSetup:
         levelList.append(Line(340, 540, 340, 520))
         levelList.append(Line(340, 520, 240, 520))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 24))
         
         # level 25
         levelList = []
@@ -1055,7 +1055,7 @@ class LevelSetup:
         levelList.append(Line(260, 240, 380, 360))
         levelList.append(Line(380, 360, 120, 360))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 25))
         
         # level 26
         levelList = []
@@ -1095,7 +1095,7 @@ class LevelSetup:
         levelList.append(Line(1100, 240, 1180, 240))
         levelList.append(Line(1180, 240, 1180, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 26))
         
         # level 27
         levelList = []
@@ -1126,7 +1126,7 @@ class LevelSetup:
         levelList.append(Line(580, 420, 420, 420))
         levelList.append(Line(420, 420, 420, 600))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 27))
         
         # level 28
         levelList = []
@@ -1156,7 +1156,7 @@ class LevelSetup:
         levelList.append(Line(620, 220, 900, 220))
         levelList.append(Line(900, 220, 900, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 28))
         
         # level 29
         levelList = []
@@ -1184,7 +1184,7 @@ class LevelSetup:
         levelList.append(Line(500, 120, 180, 120))
         levelList.append(Line(180, 120, 180, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 29))
         
         # level 30
         levelList = []
@@ -1219,7 +1219,7 @@ class LevelSetup:
         levelList.append(Line(1080, 240, 920, 240))
         levelList.append(Line(920, 240, 920, 380))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 40))
         
         # level 31
         levelList = []
@@ -1255,7 +1255,7 @@ class LevelSetup:
         levelList.append(Line(340, 180, 480, 180))
         levelList.append(Line(480, 180, 480, 240))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 31))
         
         # level 32
         levelList = []
@@ -1296,7 +1296,7 @@ class LevelSetup:
         levelList.append(Line(760, 500, 760, 460))
         levelList.append(Line(760, 460, 660, 460))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 32))
         
         # level 33
         levelList = []
@@ -1361,7 +1361,7 @@ class LevelSetup:
         levelList.append(Line(880, 80, 900, 80))
         levelList.append(Line(900, 80, 900, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 33))
         
         # level 34
         levelList = []
@@ -1413,7 +1413,7 @@ class LevelSetup:
         levelList.append(Line(680, 280, 680, 360))
         levelList.append(Line(680, 360, 760, 360))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 34))
         
         # level 35
         levelList = []
@@ -1471,7 +1471,7 @@ class LevelSetup:
         levelList.append(Line(460, 180, 460, 260))
         levelList.append(Line(460, 260, 380, 260))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 35))
         
         # level 36
         levelList = []
@@ -1523,7 +1523,7 @@ class LevelSetup:
         levelList.append(Line(560, 0, 520, 40))
         levelList.append(Line(520, 40, 480, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 36))
         
         # level 37
         levelList = []
@@ -1580,7 +1580,7 @@ class LevelSetup:
         levelList.append(Line(380, 40, 460, 40))
         levelList.append(Line(460, 40, 460, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 37))
         
         # level 38
         levelList = []
@@ -1644,7 +1644,7 @@ class LevelSetup:
         levelList.append(Line(640, 40, 980, 40))
         levelList.append(Line(980, 40, 980, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 38))
         
         # level 39
         levelList = []
@@ -1678,7 +1678,7 @@ class LevelSetup:
         levelList.append(Line(280, 40, 360, 40))
         levelList.append(Line(360, 40, 360, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 39))
         
         # level 40
         levelList = []
@@ -1725,7 +1725,7 @@ class LevelSetup:
         levelList.append(Line(400, 280, 400, 240))
         levelList.append(Line(400, 240, 280, 240))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 40))
         
         # level 41
         levelList = []
@@ -1763,7 +1763,7 @@ class LevelSetup:
         levelList.append(Line(0, 0, 0, 900))
         levelList.append(Line(1200, 900, 1200, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 41))
         
         # level 42
         levelList = []
@@ -1801,7 +1801,7 @@ class LevelSetup:
         levelList.append(Line(600, 540, 600, 440))
         levelList.append(Line(600, 440, 580, 440))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 42))
         
         # level 43
         levelList = []
@@ -1830,4 +1830,12 @@ class LevelSetup:
         levelList.append(Line(0, 900, 0, 0))
         levelList.append(Line(0, 0, 1200, 0))
         
-        self.gameLevelList.append(levelList)
+        self.gameLevelList.append(Level(levelList, 43))
+        
+        for lvl in self.gameLevelList:
+            if(lvl.levelNum >= 26 and lvl.levelNum <= 32):
+                lvl.isWind = True
+            if(lvl.levelNum >= 27 and lvl.levelNum <= 31):
+                lvl.cantMove = True
+            if(lvl.levelNum >= 37 and lvl.levelNum <= 39):
+                lvl.isIce = True

@@ -1,8 +1,9 @@
 
 class Level:
-    def __init__(self, isIce, isWind, isWindNoMove):
-        self.lines = []
-        self.isIce = isIce
-        self.isWind = isWind
-        self.isWindNoMove = isWindNoMove
+    def __init__(self, lines, num):
+        self.lines = lines
+        self.isIce = False
+        self.isWind = False
+        self.cantMove = False
+        self.levelNum = num
         

@@ -2,6 +2,7 @@ from cmu_112_graphics import *
 from Line import *
 from Player import *
 from Level import *
+from LevelSetup import *
 
 # Model ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -87,7 +88,7 @@ def timerFired(app):
                 app.level += app.player.changeLevel()[1]
                 app.player.cy = 850
         
-        app.player.checkCollisions(app.levelLines.gameLevelList[app.level])
+        app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines)
         
     app.player.movePlayer()
     
@@ -98,7 +99,7 @@ def redrawAll(app, canvas):
     # canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')
     
     if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
-        for line in app.levelLines.gameLevelList[app.level]:
+        for line in app.levelLines.gameLevelList[app.level].lines:
             line.drawLine(app, canvas)
     app.player.drawPlayer(app, canvas)
     
