@@ -1,7 +1,7 @@
 from cmu_112_graphics import *
 from Line import *
 from Player import *
-from lvlImages import *
+from Level import *
 
 # Model ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -14,21 +14,15 @@ def appStarted(app):
     app.player = Player()
     
     # keep track of all the lines
-    app.lines = []
+    app.levelLines = Level()
     
     # test first level stuff
     # ? Also you prolly have to edit each one of the lines in order to make sure y1 < y2
-    app.lines.append(Line(20, 0, 20, 460))
-    app.lines.append(Line(20, 460, 320, 460))
-    app.lines.append(Line(320, 460, 320, 820))
-    app.lines.append(Line(320, 820, 880, 820))
-    app.lines.append(Line(880, 460, 880, 820))
-    app.lines.append(Line(880, 460, 1180, 460))
-    app.lines.append(Line(1180, 0, 1180, 460))
-    app.lines.append(Line(460, 100, 740, 100))
-    app.lines.append(Line(460, 100, 460, 220))
-    app.lines.append(Line(460, 220, 740, 220))
-    app.lines.append(Line(740, 100, 740, 220))
+    app.level = 0
+    
+    # * test diagonal lines
+    # app.levelLines.gameLevelList[app.level - 1].append(Line(320,460,520,660))
+    # app.levelLines.gameLevelList[app.level - 1].append(Line(400,625,600,425))
     
     # test image stuffs
     app.image1 = app.loadImage('lvlImages/1.png')
@@ -78,15 +72,23 @@ def keyReleased(app, event):
             app.player.setDeltas(0, 0)
     
 def timerFired(app):
-    app.player.checkCollisions(app.lines)
+    if(app.player.changeLevel()[0]):
+        app.level += app.player.changeLevel()[1]
+        
+        if(app.player.changeLevel()[1] == -1 and app.level > 0):
+            app.player.cy = 0 - app.player.height
+        elif(app.player.changeLevel()[1] == +1 and app.level < len(app.levelLines.gameLevelList) - 1):
+            app.player.cy = 850
+            
+    app.player.checkCollisions(app.levelLines.gameLevelList[app.level])
     app.player.movePlayer()
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
     # canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.image1), anchor = 'nw')
-    for i in range(len(app.lines)):
-        app.lines[i].drawLine(app, canvas)
+    for line in app.levelLines.gameLevelList[app.level]:
+        line.drawLine(app, canvas)
     app.player.drawPlayer(app, canvas)
     
     

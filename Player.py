@@ -188,7 +188,32 @@ class Player:
             # TODO figure out how to do diagonal sorting
             # ? take into consideration corner point to diagonal line point thing prof mentioned
             else:
-                pass
+                left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
+                right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
+                bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                
+                # top left
+                if(top[0] and left[0]):
+                    self.dy = -self.dy
+                                    
+                # top right
+                if(top[0] and right[0]):
+                    self.dy = -self.dy
+                                    
+                # bottom left
+                if(bottom[0] and left[0]):
+                    self.dx = self.dy
+                    
+                    self.cx = bottom[1]
+                    self.cy = bottom[2] - self.height
+                
+                # bottom right
+                if(bottom[0] and right[0]):
+                    self.dx = -self.dy
+
+                    self.cx = bottom[1] - self.width
+                    self.cy = bottom[2] - self.height
     
     # checks if the player has moves off of the current horizontal line that it is resting on
     def checkMoveOffLine(self, lines):
@@ -227,14 +252,47 @@ class Player:
                     else:
                         self.onGround = False
 
-    
+    # function to check if lines are colliding with each other based on points
+    # of lines and points of player using some math formulas
+    # TODO paste citation stuff
+    def checkDiagLine(self, x1, y1, x2, y2, x3, y3, x4, y4):  
+        uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))      
+        uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+        
+        # if uA and uB are within 0-1 inclusive, then the pair of lines are colliding
+        if((uA >= 0 and uA <= 1) and (uB >= 0 and uB <= 1)):
+            interX = x1 + (uA * (x2 - x1))
+            interY = y1 + (uA * (y2 - y1))
+            
+            # return True and the point at which there is an intersection
+            return [True, interX, interY]
+        
+        # return false otherwise
+        return [False, 0, 0]
+
+    # function that allows player to jump.
     def jump(self):
+        # set's the dy to - vertJumpSpeed which increments whenever space is pressed
+        # when getting ready to jump you are squatting, so when you jump you shouldnt be anymore
         self.dy = -self.vertJumpSpeed
         self.squatting = False
         
+        # if jumpRight is True we should jump right at the fixed horizontal jumpSpeed
         if(self.jumpRight):
             self.dx = self.horiJumpSpeed
+        
+        # if jumpLeft is True, same as right just in the left direction
         elif(self.jumpLeft):
             self.dx = -self.horiJumpSpeed
+            
+        # if neither are true just jump with no horizontal velocity
         else:
             self.dx = 0
+            
+    def changeLevel(self):
+        if(self.cy + self.height < 0):
+            return [True, +1]
+        elif(self.cy > 850 and self.dy > 0):
+            return [True, -1]
+        else:
+            return [False, 0]

@@ -42,4 +42,4 @@ WE GOT JUMP WORKING WHOOOOOO
 
 Now we have to fix the weird as heck horizontal line floaty phenomenon thingy. 
 
-Then we need to figure how the heck we can get line priority.
+Before that, 
