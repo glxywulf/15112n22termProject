@@ -14,7 +14,7 @@ def appStarted(app):
     app.player = Player()
     
     # keep track of all the lines
-    app.levelLines = Level()
+    app.levelLines = LevelSetup()
     
     # test first level stuff
     # ? Also you prolly have to edit each one of the lines in order to make sure y1 < y2
@@ -24,9 +24,9 @@ def appStarted(app):
     # app.levelLines.gameLevelList[app.level - 1].append(Line(320,460,520,660))
     # app.levelLines.gameLevelList[app.level - 1].append(Line(400,625,600,425))
     
-    # test image stuffs
-    app.bgrdImage = app.loadImage('lvlImages/1.png')
-    app.avatar = app.loadImage('playerStuff/idle.png')
+    # * test image stuffs
+    # app.bgrdImage = app.loadImage('lvlImages/1.png')
+    # app.avatar = app.loadImage('playerStuff/idle.png')
         
     # set default walk speed for player
     app.timerDelay = 10
@@ -75,7 +75,8 @@ def keyReleased(app, event):
             app.player.setDeltas(0, 0)
     
 def timerFired(app):
-    app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
+    # * test image stuff
+    # app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
     
     if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
         if(app.player.changeLevel()[0]):
@@ -87,12 +88,15 @@ def timerFired(app):
                 app.player.cy = 850
         
         app.player.checkCollisions(app.levelLines.gameLevelList[app.level])
+        
     app.player.movePlayer()
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
-    canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')
+    # * test image stuff
+    # canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')
+    
     if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
         for line in app.levelLines.gameLevelList[app.level]:
             line.drawLine(app, canvas)

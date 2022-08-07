@@ -75,6 +75,9 @@ class Player:
     # TODO write up the collision stuff 
     # ! work on it
     
+    def checkLevelStatus(self, level):
+        return 42
+        
     # ok so, we have a different plan now. still relatively working along the 
     # same concept maybe but we'll just tinker around with it. I know this has 
     # made you waste like 2 days but shhhhhhhh i think this will work
@@ -119,6 +122,10 @@ class Player:
         
         # so for every line that's on the screen
         for line in lines:
+            
+            # TODO Here's probably a good place to check what kind of level we're on
+            # TODO so we can just set different conditional gates to allow certain kinds of collision
+            
             # check if it's horizontal
             if(line.isHorizontal):
                 # if so, check if the left and right side of the player is within the 
