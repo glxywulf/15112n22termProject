@@ -30,7 +30,7 @@ def appStarted(app):
     # app.avatar = app.loadImage('playerStuff/idle.png')
         
     # set default walk speed for player
-    app.timerDelay = 10
+    app.timerDelay = 3
     app.walkSpeed = 4
     
 # Controller ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,4 +104,4 @@ def redrawAll(app, canvas):
     app.player.drawPlayer(app, canvas)
     
     
-runApp(width = 1200, height = 850)
+runApp(width = 1200, height = 900)

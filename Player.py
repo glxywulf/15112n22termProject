@@ -5,11 +5,11 @@ class Player:
     def __init__(self):
         # app dimensions
         width = 1200
-        height = 850
+        height = 900
         
         # start position, player width and height
         self.cx = (width / 2)
-        self.cy = (height - 250)
+        self.cy = (height - 200)
         self.width = 50
         self.height = 65
         
@@ -17,7 +17,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.ddy = 0
-        self.gravity = .6
+        self.gravity = .6 # tweak this
         self.onGround = False
         
         # player physics numbers and stuff
@@ -84,31 +84,7 @@ class Player:
     
     def checkCollisions(self, lines):
         
-        # player sides midpoints
-        leftX = self.cx
-        leftY = self.cy + (self.height / 2)
-
-        rightX = self.cx + self.width
-        rightY = self.cy + (self.height / 2)
-
-        topX = self.cx + (self.width / 2)
-        topY = self.cy
-
-        bottomX = self.cx + (self.width / 2)
-        bottomY = self.cy + self.height
-        
-        # player corners
-        tLx = self.cx
-        tLy = self.cy
-        
-        tRx = self.cx + self.width
-        tRy = self.cy
-        
-        bLx = self.cx
-        bLy = self.cy + self.height
-        
-        bRx = self.cx + self.width
-        bRy = self.cy + self.height
+        collidedLines = self.getCollidedLines(lines)
         
         # * actual collision stuff below
         
@@ -119,109 +95,18 @@ class Player:
         # ! ok, so there's kind of an issue that we're running into right at the
         # ! beginning. We can't seem to quite understand which line to choose to collide with.
         # ! so this'll be the first issue to combat in a little bit.
-        
+                
         # so for every line that's on the screen
-        for line in lines:
-            
-            # TODO Here's probably a good place to check what kind of level we're on
-            # TODO so we can just set different conditional gates to allow certain kinds of collision
-            
-            # check if it's horizontal
-            if(line.isHorizontal):
-                # if so, check if the left and right side of the player is within the 
-                # the horizontal length of the line in order to apply any effect to it
-                if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2)):
-                    # since we're within this particular line, check if the bottom of the
-                    # player has come into contact with the line.
-                    if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
-                        # set onGround to True if it has and snap the bottom to the line
-                        self.onGround = True
-                        self.cy = line.y1 - self.height
-                        
-                        if(self.jumpLeft):
-                            self.jumpLeft = False
-                            self.cy = line.y1 - self.height
-                        elif(self.jumpRight):
-                            self.jumpRight = False
-                            self.cy = line.y1 - self.height
-                            
-                        self.dx = 0
-                        self.dy = 0
-                    
-                    # check if the top has collided with a horizontal line
-                    if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
-                        # in that case, snap the top to the line and reverse its upward velocity
-                        self.cy = line.y1
-                        self.dy = -self.dy
-                        
-                        if(self.jumpLeft):
-                            self.jumpLeft = False
-                        elif(self.jumpRight):
-                            self.jumpRight = False
-                                            
-                # if the player isn't within the horizontal lines length
-                else:
-                    self.checkMoveOffLine(lines)
-            
-            # or if it's vertical
-            elif(line.isVertical):
-                # check if the player is within the vertical length of the line
-                if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2)):
-                    # check if the line is on the right of the player and we're hitting it
-                    if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
-                        # if we're on the ground
-                        if(self.onGround):
-                            # then simply snap the player's right to the line
-                            self.cx = line.x1 - self.width
-                        
-                        # if we're falling or jumping
-                        else:
-                            # reverse the horizontal velocity after snapping the
-                            # player's right to the line
-                            self.cx = line.x1 - self.width
-                            self.dx = -(self.dx / 2)
-                            
-                    # same thing as above except for the left side of the player
-                    elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
-                        # if we're on the ground, snap the left side to the line
-                        if(self.onGround):
-                            self.cx = line.x1
-                            
-                        # otherwise, reverse hori velocity and snap to the line
-                        else:
-                            self.cx = line.x1
-                            self.dx = -(self.dx / 2)
-            
-            # TODO figure out how to do diagonal sorting
-            # ? take into consideration corner point to diagonal line point thing prof mentioned
-            else:
-                left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
-                right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
-                top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
-                bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+        if(len(collidedLines) == 1):
+            for line in collidedLines:
+                self.reactCollide(line)
                 
-                # top left
-                if(top[0] and left[0]):
-                    self.dy = -self.dy
-                                    
-                # top right
-                if(top[0] and right[0]):
-                    self.dy = -self.dy
-                                    
-                # bottom left
-                if(bottom[0] and left[0]):
-                    self.dx = self.dy
-                    
-                    self.cx = bottom[1]
-                    self.cy = bottom[2] - self.height
+        elif(len(collidedLines) >= 2):
+            
+            priority = self.getPriority(collidedLines)
+            if(priority != None):
+                self.reactCollide(priority)
                 
-                # bottom right
-                if(bottom[0] and right[0]):
-                    self.dx = -self.dy
-
-                    self.cx = bottom[1] - self.width
-                    self.cy = bottom[2] - self.height
-    
     # checks if the player has moves off of the current horizontal line that it is resting on
     def checkMoveOffLine(self, lines):
         # first check if player is on the ground, if so run the check
@@ -303,3 +188,241 @@ class Player:
             return [True, -1]
         else:
             return [False, 0]
+        
+    def getCollidedLines(self, lines):
+        
+        collidedWith = []
+        
+        # player sides midpoints
+        leftX = self.cx
+        leftY = self.cy + (self.height / 2)
+
+        rightX = self.cx + self.width
+        rightY = self.cy + (self.height / 2)
+
+        topX = self.cx + (self.width / 2)
+        topY = self.cy
+
+        bottomX = self.cx + (self.width / 2)
+        bottomY = self.cy + self.height
+        
+        # player corners
+        tLx = self.cx
+        tLy = self.cy
+        
+        tRx = self.cx + self.width
+        tRy = self.cy
+        
+        bLx = self.cx
+        bLy = self.cy + self.height
+        
+        bRx = self.cx + self.width
+        bRy = self.cy + self.height
+        
+        for line in lines:
+            if(line.isHorizontal):
+                if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2)):
+                    if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
+                        collidedWith.append(line)
+                    if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
+                        collidedWith.append(line)
+                else:
+                    self.checkMoveOffLine(lines)
+            elif(line.isVertical):
+                if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
+                    if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
+                        collidedWith.append(line)
+                    elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
+                        collidedWith.append(line)
+            else:
+                left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
+                right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
+                bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                
+                if(left[0] or right[0] or top[0] or bottom[0]):
+                    collidedWith.append(line)
+                            
+        return collidedWith
+    
+    def getPriority(self, lines):
+        
+        # find out what kind of lines you've bumped into
+        hori = None
+        vert = None
+        diag = None
+        
+        for line in lines:
+            if(line.isHorizontal):
+                hori = line
+            elif(line.isVertical):
+                vert = line
+            else:
+                diag = line
+        
+        # player corners
+        # top left
+        tLx = self.cx
+        tLy = self.cy
+        
+        # top right
+        tRx = self.cx + self.width
+        tRy = self.cy
+        
+        # bottom left
+        bLx = self.cx
+        bLy = self.cy + self.height
+        
+        # bottom right
+        bRx = self.cx + self.width
+        bRy = self.cy + self.height
+        
+        # compare how much we have to correct the player by
+        correctX = None
+        correctY = None
+        
+        if(hori != None and vert != None):
+            if(self.dx > 0):
+                correctX = bRx - vert.x1
+                correctY = bRy - hori.y1
+            elif(self.dx < 0):
+                correctX = vert.x1 - bLx
+                correctY = bLy - hori.y1
+            elif(self.dx == 0):
+                return hori
+                
+            if(correctX > correctY and not correctY < 1):
+                return hori
+            elif(correctX < correctY):
+                return vert
+        elif(hori != None and diag != None):
+            return hori
+        elif(vert != None and diag != None):
+            return vert
+    
+    def reactCollide(self, line):
+        # player sides midpoints
+        leftX = self.cx
+        leftY = self.cy + (self.height / 2)
+
+        rightX = self.cx + self.width
+        rightY = self.cy + (self.height / 2)
+
+        topX = self.cx + (self.width / 2)
+        topY = self.cy
+
+        bottomX = self.cx + (self.width / 2)
+        bottomY = self.cy + self.height
+        
+        # player corners
+        tLx = self.cx
+        tLy = self.cy
+        
+        tRx = self.cx + self.width
+        tRy = self.cy
+        
+        bLx = self.cx
+        bLy = self.cy + self.height
+        
+        bRx = self.cx + self.width
+        bRy = self.cy + self.height
+        
+        # * Reactions are below here
+        
+        # TODO Here's probably a good place to check what kind of level we're on
+        # TODO so we can just set different conditional gates to allow certain kinds of collision
+                
+        # check if it's horizontal
+        if(line.isHorizontal):
+            # if so, check if the left and right side of the player is within the 
+            # the horizontal length of the line in order to apply any effect to it
+            if((leftX > line.x1 and leftX < line.x2) or (rightX > line.x1 and rightX < line.x2)):
+                # since we're within this particular line, check if the bottom of the
+                # player has come into contact with the line.
+                if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
+                    # set onGround to True if it has and snap the bottom to the line
+                    self.onGround = True
+                    self.cy = line.y1 - self.height
+                    
+                    if(self.jumpLeft):
+                        self.jumpLeft = False
+                        self.cy = line.y1 - self.height
+                    elif(self.jumpRight):
+                        self.jumpRight = False
+                        self.cy = line.y1 - self.height
+                        
+                    self.dx = 0
+                    self.dy = 0
+                                                
+                # check if the top has collided with a horizontal line
+                if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY) and self.dy < 0):
+                    # in that case, snap the top to the line and reverse its upward velocity
+                    self.cy = line.y1
+                    self.dy = -self.dy
+                    
+                    if(self.jumpLeft):
+                        self.jumpLeft = False
+                    elif(self.jumpRight):
+                        self.jumpRight = False
+                                                
+                    # if the player isn't within the horizontal lines length
+                    else:
+                        self.checkMoveOffLine(line)
+                
+        # or if it's vertical
+        elif(line.isVertical):
+            if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
+                # check if the line is on the right of the player and we're hitting it
+                if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
+                    # if we're on the ground
+                    if(self.onGround):
+                        # then simply snap the player's right to the line
+                        self.cx = line.x1 - self.width
+                    
+                    # if we're falling or jumping
+                    else:
+                        # reverse the horizontal velocity after snapping the
+                        # player's right to the line
+                        self.cx = line.x1 - self.width
+                        self.dx = -(self.dx / 2)
+                        
+                # same thing as above except for the left side of the player
+                elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
+                    # if we're on the ground, snap the left side to the line
+                    if(self.onGround):
+                        self.cx = line.x1
+
+                    # otherwise, reverse hori velocity and snap to the line
+                    else:
+                        self.cx = line.x1
+                        self.dx = -(self.dx / 2)
+
+        # TODO figure out how to do diagonal sorting
+        # ? take into consideration corner point to diagonal line point thing prof mentioned
+        else:
+            left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
+            right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+            top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
+            bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+            
+            # top left
+            if(top[0] and left[0]):
+                self.dy = -self.dy
+                                
+            # top right
+            if(top[0] and right[0]):
+                self.dy = -self.dy
+                                
+            # bottom left
+            if(bottom[0] and left[0]):
+                self.dx = self.dy
+                
+                self.cx = bottom[1]
+                self.cy = bottom[2] - self.height
+                
+            # bottom right
+            if(bottom[0] and right[0]):
+                self.dx = -self.dy
+
+                self.cx = bottom[1] - self.width
+                self.cy = bottom[2] - self.height
