@@ -26,8 +26,8 @@ def appStarted(app):
     # app.levelLines.gameLevelList[app.level - 1].append(Line(400,625,600,425))
     
     # * test image stuffs
-    # app.bgrdImage = app.loadImage('lvlImages/1.png')
-    # app.avatar = app.loadImage('playerStuff/idle.png')
+    app.bgrdImage = app.loadImage('lvlImages/1.png')
+    app.avatar = app.loadImage('playerStuff/idle.png')
         
     # set default walk speed for player
     app.timerDelay = 3
@@ -55,8 +55,6 @@ def keyPressed(app, event):
             app.player.squatting = True
             if(app.player.vertJumpSpeed < app.player.maxVertJump):
                 app.player.vertJumpSpeed += 1
-        else:
-            return 42
         
     # debug
     elif(event.key == 'r'):
@@ -77,7 +75,7 @@ def keyReleased(app, event):
     
 def timerFired(app):
     # * test image stuff
-    # app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
+    app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
     
     if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
         if(app.player.changeLevel()[0]):

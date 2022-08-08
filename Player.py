@@ -245,6 +245,9 @@ class Player:
                             
         return collidedWith
     
+    # ! So priority works most of the time. If I ever come back to work on this 
+    # ! project again, this'll be a thing I need to fine tune. But for the sake
+    # ! of now, it's fine.
     def getPriority(self, lines):
         
         # find out what kind of lines you've bumped into
@@ -261,6 +264,9 @@ class Player:
                 diag = line
         
         # player corners
+        # player mid height
+        midY = self.cy + (self.height / 2)
+        
         # top left
         tLx = self.cx
         tLy = self.cy
@@ -281,20 +287,77 @@ class Player:
         correctX = None
         correctY = None
         
+        # if we collided with a horizontal and vertical line
         if(hori != None and vert != None):
-            if(self.dx > 0):
-                correctX = bRx - vert.x1
-                correctY = bRy - hori.y1
-            elif(self.dx < 0):
-                correctX = vert.x1 - bLx
-                correctY = bLy - hori.y1
-            elif(self.dx == 0):
-                return hori
-                
-            if(correctX > correctY and not correctY < 1):
-                return hori
-            elif(correctX < correctY):
-                return vert
+            # prioritize top collision info
+            if((tLx < vert.x1 and tLy < hori.y1) or (tRx > vert.x1 and tRy < hori.y1)):
+                if(self.dx > 0):
+                    correctX = abs(tRx - vert.x1)
+                    correctY = abs(tRy - hori.y1)
+                elif(self.dx < 0):
+                    correctX = abs(vert.x1 - tLx)
+                    correctY = abs(tLy - hori.y1)
+                elif(self.dx == 0):
+                    # there's a slight issue when player is on the ground where it isn't
+                    # alligning correctly. So we have to make sure that it does
+                    
+                    # if we're running into a wall left of player that's within proximity of the player
+                    if((self.cx <= vert.x1) and (abs(self.cx - vert.x1) < 5)):
+                        # snap the left of the player to the line
+                        self.cx = vert.x1
+                        
+                    # if we're running into a wall right of the player that's within proximity of the player
+                    elif((self.cx + self.width >= vert.x1) and (abs(self.cx + self.width - vert.x1) < 5)):
+                        # snap the right of the player to the line
+                        self.cx = vert.x1 - self.width
+                    
+                    return hori
+            
+            # if correction variables are still None because the top corners haven't collided
+            if(correctX != None and correctY != None):
+                # check if we're colliding into the pair o`f lines with the bottom corners of the player
+                if((bLx < vert.x1 and bLy > hori.y1) or (bRx > vert.x1 and bRy > hori.y1)):
+                    # if we're moving right
+                    if(self.dx > 0):
+                        # set the correction variables to the difference of the relevant lines' x/y coord
+                        correctX = abs(bRx - vert.x1)
+                        correctY = abs(bRy - hori.y1)
+                        
+                    # if we're moving left
+                    elif(self.dx < 0):
+                        # set the correction variables to the difference of the relevant lines' x/y coord
+                        correctX = abs(vert.x1 - bLx)
+                        correctY = abs(bLy - hori.y1)
+                        
+                    # if we're jumping straight up/down
+                    elif(self.dx == 0):
+                        # there's a slight issue when player is on the ground where it isn't
+                        # alligning correctly. So we have to make sure that it does
+                        
+                        # if we're running into a wall left of player that's within proximity of the player
+                        if((self.cx <= vert.x1) and (abs(self.cx - vert.x1) < 5)):
+                            # snap the left of the player to the line
+                            self.cx = vert.x1
+
+                        # if we're running into a wall right of the player that's within proximity of the player
+                        elif((self.cx + self.width >= vert.x1) and (abs(self.cx + self.width - vert.x1) < 5)):
+                            # snap the right of the player to the line
+                            self.cx = vert.x1 - self.width
+                        
+                        # regardless of hitting left/right if we're not moving left or right hori line has priority
+                        return hori
+            
+            # make sure that both the correction variables aren't still None
+            if(correctX != None and correctY != None):
+                # check whether the x/y correction is greater than the other
+                # whichever one is lesser we should return the line that causes
+                # that correction
+                if(correctX > correctY and not correctY < 1):
+                    return hori
+                elif(correctX < correctY and not correctX < 1):
+                    return vert
+        
+        # if there's ever a diagonal line then return whatever other line that's present
         elif(hori != None and diag != None):
             return hori
         elif(vert != None and diag != None):
@@ -373,28 +436,28 @@ class Player:
         elif(line.isVertical):
             if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
                 # check if the line is on the right of the player and we're hitting it
-                if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
+                if(line.x2 < rightX and (line.x2 > topX or line.x2 > bottomX)):
                     # if we're on the ground
                     if(self.onGround):
                         # then simply snap the player's right to the line
-                        self.cx = line.x1 - self.width
+                        self.cx = line.x2 - self.width
                     
                     # if we're falling or jumping
                     else:
                         # reverse the horizontal velocity after snapping the
                         # player's right to the line
-                        self.cx = line.x1 - self.width
+                        self.cx = line.x2 - self.width
                         self.dx = -(self.dx / 2)
                         
                 # same thing as above except for the left side of the player
-                elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
+                elif(line.x2 > leftX and (line.x2 < topX or line.x2 < bottomX)):
                     # if we're on the ground, snap the left side to the line
                     if(self.onGround):
-                        self.cx = line.x1
+                        self.cx = line.x2
 
                     # otherwise, reverse hori velocity and snap to the line
                     else:
-                        self.cx = line.x1
+                        self.cx = line.x2
                         self.dx = -(self.dx / 2)
 
         # TODO figure out how to do diagonal sorting
