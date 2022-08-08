@@ -36,10 +36,17 @@ def appStarted(app):
 # Controller ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def keyPressed(app, event):
-    if(app.player.onGround and not app.player.squatting):
+    if(app.player.onGround and not app.player.squatting and not app.levelLines.gameLevelList[app.level].cantMove):
         if(event.key == 'Left'):
-            app.player.setDeltas(-app.walkSpeed, 0)
+            app.player.isMoving = True
+            app.player.moveLeft = True
+            
+            if(app.levelLines.gameLevelList[app.level].isIce):
+                pass
+            else:
+                app.player.setDeltas(-app.walkSpeed, 0)
         elif(event.key == 'Right'):
+            app.player.isMoving = True
             app.player.setDeltas(app.walkSpeed, 0)
     elif(app.player.onGround and app.player.squatting):
         if(event.key == 'Left'):
@@ -69,10 +76,18 @@ def keyReleased(app, event):
         if(event.key == 'Right'):
             app.player.jumpRight = False
             app.player.setDeltas(0, 0)
+            
+            if(app.levelLines.gameLevelList[app.level].isIce):
+                app.player.applyIce()
+                
         elif(event.key == 'Left'):
             app.player.jumpLeft = False
             app.player.setDeltas(0, 0)
+            
+            if(app.levelLines.gameLevelList[app.level].isIce):
+                app.player.applyIce()
     
+
 def timerFired(app):
     # * test image stuff
     app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
@@ -84,11 +99,14 @@ def timerFired(app):
                 app.player.cy = 0 - app.player.height
             elif(app.player.changeLevel()[1] == +1):
                 app.level += app.player.changeLevel()[1]
-                app.player.cy = 850
-        
+                app.player.cy = 900
+                
+        if(app.levelLines.gameLevelList[app.level].isIce):
+            app.player.applyIce()
+            
         app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
         
-    app.player.movePlayer()
+    app.player.movePlayer(app.levelLines.gameLevelList[app.level])
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -13,22 +13,33 @@ class Player:
         self.width = 50
         self.height = 65
         
-        # movement deltas
+        # movement deltas and player status
         self.dx = 0
         self.dy = 0
         self.ddy = 0
-        self.gravity = .6 # tweak this
         self.onGround = False
-        
-        # player physics numbers and stuff
-        self.minVertJump = 5
-        self.maxVertJump = 22
-        self.vertJumpSpeed = self.minVertJump
-        self.horiJumpSpeed = 8
-        self.termVel = 20
         self.squatting = False
         self.jumpRight = False
         self.jumpLeft = False
+        self.isMoving = False
+        self.moveLeft = False
+        self.moveRight = False
+        
+        # player physics numbers and stuff
+        # vertical physics (i.e. gravity)
+        self.minVertJump = 5
+        self.maxVertJump = 22
+        self.vertJumpSpeed = self.minVertJump
+        self.gravity = .6 # tweak this
+        self.horiJumpSpeed = 8
+        self.termVel = 20
+        
+        # horizontal physics (i.e. ice and wind stuff)
+        self.maxWind = .3
+        self.windAccel = .003
+        self.iceAccel = .2
+        self.isSlidding = False
+        self.walkSpeed = 4
         
     def drawPlayer(self, app, canvas):
         # draw the player
@@ -54,14 +65,16 @@ class Player:
         self.dy = dy
     
     # apply the deltas to the players center point
-    def movePlayer(self):
+    def movePlayer(self, level):
+        if(level.isIce):
+            self.applyIce()
+        
         self.cx += self.dx
         self.cy += self.dy
         
         self.applyGravity()
         
     # apply gravity on the player. finished initial velocity
-    # TODO adjust self to incorporate acceleration as well after collision
     def applyGravity(self):
         # check if player is on a "ground" 
         if not(self.onGround):
@@ -70,7 +83,28 @@ class Player:
         # otherwise, set dy to 0
         else:
             self.dy = 0
-
+            
+    # ! Still working on this
+    def applyIce(self):
+        if(self.onGround and not self.isMoving):
+            self.isSlidding = True
+            
+            if(self.dx < 0):
+                self.dx += self.iceAccel
+            elif(self.dx > 0):
+                self.dx -= self.iceAccel
+            
+            if(self.dx < .1 and self.dx > -.1):
+                self.dx = 0
+        elif(self.onGround and self.isMoving):
+            if(self.dx < 4 and self.dx > -4):
+                if(self.moveRight):
+                    self.dx += self.iceAccel
+                elif(self.moveLeft):
+                    self.dx -= self.iceAccel
+                    
+            
+            
     # TODO paste citation stuff and continue work on collision
     # TODO write up the collision stuff 
     # ! work on it
@@ -83,32 +117,17 @@ class Player:
         
         # get the lines we've collided with
         collidedLines = self.getCollidedLines(lines)
-        
-        # get what kind of level we're on
-        isIce = level.getIce()
-        isWind = level.getWind()
-        cantMove = level.getMove()
                 
-        # * actual collision stuff below
-        
-        # we need to check if the lines are horizontal or vertical first things
-        # first. worry about diagonal logic after you get this stuff done
-        # let's also sort lines into if they're below, above, on the right/left
-        
-        # ! ok, so there's kind of an issue that we're running into right at the
-        # ! beginning. We can't seem to quite understand which line to choose to collide with.
-        # ! so this'll be the first issue to combat in a little bit.
-                
-        # so for every line that's on the screen
+        # * actual collision stuff below                        
+        # so for every line we collide with, react accordingly
         if(len(collidedLines) == 1):
-            for line in collidedLines:
-                self.reactCollide(line)
-                
+            self.reactCollide(collidedLines, level)
+        
+        # clarify reactions to the prioritized line
         elif(len(collidedLines) >= 2):
-            
-            priority = self.getPriority(collidedLines)
+            priority = [self.getPriority(collidedLines)]
             if(priority != None):
-                self.reactCollide(priority)
+                self.reactCollide(priority, level)
                 
     # checks if the player has moves off of the current horizontal line that it is resting on
     def checkMoveOffLine(self, lines):
@@ -362,11 +381,13 @@ class Player:
         
         # if there's ever a diagonal line then return whatever other line that's present
         elif(hori != None and diag != None):
-            return hori
+            diagMid = (diag.y1 + diag.y2) / 2
+            if(diagMid > hori.y1):
+                return hori
         elif(vert != None and diag != None):
             return vert
     
-    def reactCollide(self, line):
+    def reactCollide(self, lines, level):        
         # player sides midpoints
         leftX = self.cx
         leftY = self.cy + (self.height / 2)
@@ -394,101 +415,108 @@ class Player:
         bRy = self.cy + self.height
         
         # * Reactions are below here
-        
-        # TODO Here's probably a good place to check what kind of level we're on
-        # TODO so we can just set different conditional gates to allow certain kinds of collision
-                
-        # check if it's horizontal
-        if(line.isHorizontal):
-            # if so, check if the left and right side of the player is within the 
-            # the horizontal length of the line in order to apply any effect to it
-            if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2) or (line.x1 >= leftX and line.x2 <= rightX)):
-                # since we're within this particular line, check if the bottom of the
-                # player has come into contact with the line.
-                if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
-                    # set onGround to True if it has and snap the bottom to the line
-                    self.onGround = True
-                    self.cy = line.y1 - self.height
-                    
-                    if(self.jumpLeft):
-                        self.jumpLeft = False
-                        self.cy = line.y1 - self.height
-                    elif(self.jumpRight):
-                        self.jumpRight = False
+        for line in lines:
+            # check if it's horizontal
+            if(line.isHorizontal):
+                # if so, check if the left and right side of the player is within the 
+                # the horizontal length of the line in order to apply any effect to it
+                if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2) or (line.x1 >= leftX and line.x2 <= rightX)):
+                    # since we're within this particular line, check if the bottom of the
+                    # player has come into contact with the line.
+                    if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
+                        # set onGround to True if it has and snap the bottom to the line
+                        self.onGround = True
                         self.cy = line.y1 - self.height
                         
-                    self.dx = 0
-                    self.dy = 0
-                                                
-                # check if the top has collided with a horizontal line
-                if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY) and self.dy < 0):
-                    # in that case, snap the top to the line and reverse its upward velocity
-                    self.cy = line.y1
+                        # TODO Implement the level status effects here. Since this is 
+                        # TODO after we've snapped the player to the line and before we
+                        # TODO begin changing the player's deltas
+                        
+                        if(self.jumpLeft):
+                            self.jumpLeft = False
+                            self.cy = line.y1 - self.height
+                        elif(self.jumpRight):
+                            self.jumpRight = False
+                            self.cy = line.y1 - self.height
+                            
+                        if(level.isIce):
+                            self.applyIce()
+                            self.checkMoveOffLine(lines)
+                        else:
+                            self.dx = 0
+                            self.dy = 0
+                                                    
+                    # check if the top has collided with a horizontal line
+                    if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY) and self.dy < 0):
+                        # in that case, snap the top to the line and reverse its upward velocity
+                        self.cy = line.y1
+                        self.dy = -self.dy
+                        
+                        if(self.jumpLeft):
+                            self.jumpLeft = False
+                        elif(self.jumpRight):
+                            self.jumpRight = False
+                                                    
+                        # if the player isn't within the horizontal lines length
+                        else:
+                            self.checkMoveOffLine(line)
+                    
+            # or if it's vertical
+            elif(line.isVertical):
+                if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
+                    # check if the line is on the right of the player and we're hitting it
+                    if(line.x2 < rightX and (line.x2 > topX or line.x2 > bottomX)):
+                        # if we're on the ground
+                        if(self.onGround):
+                            # then simply snap the player's right to the line
+                            self.cx = line.x2 - self.width
+                        
+                        # if we're falling or jumping
+                        else:
+                            # reverse the horizontal velocity after snapping the
+                            # player's right to the line
+                            self.cx = line.x2 - self.width
+                            self.dx = -(self.dx / 2)
+                            
+                    # same thing as above except for the left side of the player
+                    elif(line.x2 > leftX and (line.x2 < topX or line.x2 < bottomX)):
+                        # if we're on the ground, snap the left side to the line
+                        if(self.onGround):
+                            self.cx = line.x2
+
+                        # otherwise, reverse hori velocity and snap to the line
+                        else:
+                            self.cx = line.x2
+                            self.dx = -(self.dx / 2)
+
+            # TODO figure out how to do diagonal sorting
+            # ? take into consideration corner point to diagonal line point thing prof mentioned
+            else:
+                left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
+                right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
+                bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
+                
+                # top left
+                if(top[0] and left[0]):
                     self.dy = -self.dy
+                                    
+                # top right
+                if(top[0] and right[0]):
+                    self.dy = -self.dy
+                                    
+                # bottom left
+                if(bottom[0] and left[0]):
+                    self.dx = self.dy
+                    self.onGround = False
                     
-                    if(self.jumpLeft):
-                        self.jumpLeft = False
-                    elif(self.jumpRight):
-                        self.jumpRight = False
-                                                
-                    # if the player isn't within the horizontal lines length
-                    else:
-                        self.checkMoveOffLine(line)
-                
-        # or if it's vertical
-        elif(line.isVertical):
-            if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
-                # check if the line is on the right of the player and we're hitting it
-                if(line.x2 < rightX and (line.x2 > topX or line.x2 > bottomX)):
-                    # if we're on the ground
-                    if(self.onGround):
-                        # then simply snap the player's right to the line
-                        self.cx = line.x2 - self.width
+                    self.cx = bottom[1] - 1
+                    self.cy = bottom[2] - self.height - 1
                     
-                    # if we're falling or jumping
-                    else:
-                        # reverse the horizontal velocity after snapping the
-                        # player's right to the line
-                        self.cx = line.x2 - self.width
-                        self.dx = -(self.dx / 2)
-                        
-                # same thing as above except for the left side of the player
-                elif(line.x2 > leftX and (line.x2 < topX or line.x2 < bottomX)):
-                    # if we're on the ground, snap the left side to the line
-                    if(self.onGround):
-                        self.cx = line.x2
+                # bottom right
+                if(bottom[0] and right[0]):
+                    self.dx = -self.dy
+                    self.onGround = False
 
-                    # otherwise, reverse hori velocity and snap to the line
-                    else:
-                        self.cx = line.x2
-                        self.dx = -(self.dx / 2)
-
-        # TODO figure out how to do diagonal sorting
-        # ? take into consideration corner point to diagonal line point thing prof mentioned
-        else:
-            left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
-            right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
-            top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
-            bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
-            
-            # top left
-            if(top[0] and left[0]):
-                self.dy = -self.dy
-                                
-            # top right
-            if(top[0] and right[0]):
-                self.dy = -self.dy
-                                
-            # bottom left
-            if(bottom[0] and left[0]):
-                self.dx = self.dy
-                
-                self.cx = bottom[1]
-                self.cy = bottom[2] - self.height
-                
-            # bottom right
-            if(bottom[0] and right[0]):
-                self.dx = -self.dy
-
-                self.cx = bottom[1] - self.width
-                self.cy = bottom[2] - self.height
+                    self.cx = bottom[1] - self.width - 1
+                    self.cy = bottom[2] - self.height - 1
