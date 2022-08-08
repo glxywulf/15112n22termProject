@@ -74,18 +74,21 @@ class Player:
     # TODO paste citation stuff and continue work on collision
     # TODO write up the collision stuff 
     # ! work on it
-    
-    def checkLevelStatus(self, level):
-        return 42
         
     # ok so, we have a different plan now. still relatively working along the 
     # same concept maybe but we'll just tinker around with it. I know this has 
     # made you waste like 2 days but shhhhhhhh i think this will work
     
-    def checkCollisions(self, lines):
+    def checkCollisions(self, lines, level):
         
+        # get the lines we've collided with
         collidedLines = self.getCollidedLines(lines)
         
+        # get what kind of level we're on
+        isIce = level.getIce()
+        isWind = level.getWind()
+        cantMove = level.getMove()
+                
         # * actual collision stuff below
         
         # we need to check if the lines are horizontal or vertical first things
@@ -221,7 +224,7 @@ class Player:
         
         for line in lines:
             if(line.isHorizontal):
-                if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2)):
+                if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2) or (line.x1 >= leftX and line.x2 <= rightX)):
                     if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
                         collidedWith.append(line)
                     if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
@@ -399,7 +402,7 @@ class Player:
         if(line.isHorizontal):
             # if so, check if the left and right side of the player is within the 
             # the horizontal length of the line in order to apply any effect to it
-            if((leftX > line.x1 and leftX < line.x2) or (rightX > line.x1 and rightX < line.x2)):
+            if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2) or (line.x1 >= leftX and line.x2 <= rightX)):
                 # since we're within this particular line, check if the bottom of the
                 # player has come into contact with the line.
                 if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):

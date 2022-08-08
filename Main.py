@@ -86,7 +86,7 @@ def timerFired(app):
                 app.level += app.player.changeLevel()[1]
                 app.player.cy = 850
         
-        app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines)
+        app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
         
     app.player.movePlayer()
     

@@ -42,4 +42,15 @@ WE GOT JUMP WORKING WHOOOOOO
 
 Now we have to fix the weird as heck horizontal line floaty phenomenon thingy. 
 
-Before that, 
+Floaty thing fixed whoo
+
+Collision priority stuff done too. Works most of the time and I'm just going to 
+round that up to all of the time.
+
+Working on making ice/wind/cantmove levels
+
+NVM, there's an annoying issue in the levels with smaller horizontal platforms
+Since they're smaller than the player's bottom side it doesn't get registered as
+a platform unless one of the player's corners hits the line
+
+Ok that's fixed I think.
