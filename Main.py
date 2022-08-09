@@ -40,32 +40,33 @@ def keyPressed(app, event):
         if(event.key == 'Left'):
             app.player.isMoving = True
             app.player.moveLeft = True
-            
-            if(app.levelLines.gameLevelList[app.level].isIce):
-                pass
-            else:
-                app.player.setDeltas(-app.walkSpeed, 0)
+            app.player.setDeltas(-app.walkSpeed, 0)
         elif(event.key == 'Right'):
             app.player.isMoving = True
+            app.player.moveRight = True
             app.player.setDeltas(app.walkSpeed, 0)
     elif(app.player.onGround and app.player.squatting):
         if(event.key == 'Left'):
             app.player.jumpLeft = True
         elif(event.key == 'Right'):
             app.player.jumpRight = True
-    if(event.key == 'n' and app.level < len(app.levelLines.gameLevelList)):
-        app.level += 1
-        app.player.onGround = False
+            
     if(event.key == 'Space'):
         if(app.player.onGround):
             app.player.setDeltas(0, 0)
             app.player.squatting = True
             if(app.player.vertJumpSpeed < app.player.maxVertJump):
                 app.player.vertJumpSpeed += 1
+                
+    if(app.levelLines.gameLevelList[app.level].isIce):
+        app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
         
     # debug
-    elif(event.key == 'r'):
+    if(event.key == 'r'):
         appStarted(app)
+    if(event.key == 'n' and app.level < len(app.levelLines.gameLevelList) - 1):
+        app.level += 1
+        app.player.onGround = False
         
 def keyReleased(app, event):
     if(event.key == 'Space' and app.player.onGround):
@@ -78,14 +79,20 @@ def keyReleased(app, event):
             app.player.setDeltas(0, 0)
             
             if(app.levelLines.gameLevelList[app.level].isIce):
-                app.player.applyIce()
+                app.player.isMoving = False
+                app.player.moveRight = False
+
+                app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
                 
         elif(event.key == 'Left'):
             app.player.jumpLeft = False
             app.player.setDeltas(0, 0)
             
             if(app.levelLines.gameLevelList[app.level].isIce):
-                app.player.applyIce()
+                app.player.isMoving = False
+                app.player.moveLeft = False
+
+                app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
     
 
 def timerFired(app):
@@ -102,11 +109,11 @@ def timerFired(app):
                 app.player.cy = 900
                 
         if(app.levelLines.gameLevelList[app.level].isIce):
-            app.player.applyIce()
+            app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
             
         app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
         
-    app.player.movePlayer(app.levelLines.gameLevelList[app.level])
+        app.player.movePlayer(app.levelLines.gameLevelList[app.level], app.levelLines.gameLevelList[app.level].lines)
     
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

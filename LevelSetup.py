@@ -24,7 +24,7 @@ class LevelSetup:
         levelList.append(Line(740, 100, 740, 220))
         
         self.gameLevelList.append(Level(levelList, 1))
-        self.gameLevelList[0].isIce = True # delete this later
+        # self.gameLevelList[0].isIce = True # delete this later
         
         # level 2
         levelList = []

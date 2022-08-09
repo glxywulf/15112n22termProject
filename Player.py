@@ -37,7 +37,7 @@ class Player:
         # horizontal physics (i.e. ice and wind stuff)
         self.maxWind = .3
         self.windAccel = .003
-        self.iceAccel = .2
+        self.iceAccel = .5
         self.isSlidding = False
         self.walkSpeed = 4
         
@@ -65,9 +65,9 @@ class Player:
         self.dy = dy
     
     # apply the deltas to the players center point
-    def movePlayer(self, level):
+    def movePlayer(self, level, lines):
         if(level.isIce):
-            self.applyIce()
+            self.applyIce(lines)
         
         self.cx += self.dx
         self.cy += self.dy
@@ -85,7 +85,7 @@ class Player:
             self.dy = 0
             
     # ! Still working on this
-    def applyIce(self):
+    def applyIce(self, lines):
         if(self.onGround and not self.isMoving):
             self.isSlidding = True
             
@@ -96,17 +96,17 @@ class Player:
             
             if(self.dx < .1 and self.dx > -.1):
                 self.dx = 0
+                
         elif(self.onGround and self.isMoving):
             if(self.dx < 4 and self.dx > -4):
                 if(self.moveRight):
                     self.dx += self.iceAccel
                 elif(self.moveLeft):
-                    self.dx -= self.iceAccel
+                    self.dx -= self.iceAccel  
                     
-            
+        self.checkMoveOffLine(lines)                  
             
     # TODO paste citation stuff and continue work on collision
-    # TODO write up the collision stuff 
     # ! work on it
         
     # ok so, we have a different plan now. still relatively working along the 
@@ -126,7 +126,7 @@ class Player:
         # clarify reactions to the prioritized line
         elif(len(collidedLines) >= 2):
             priority = [self.getPriority(collidedLines)]
-            if(priority != None):
+            if(priority != []):
                 self.reactCollide(priority, level)
                 
     # checks if the player has moves off of the current horizontal line that it is resting on
@@ -440,7 +440,7 @@ class Player:
                             self.cy = line.y1 - self.height
                             
                         if(level.isIce):
-                            self.applyIce()
+                            self.applyIce(lines)
                             self.checkMoveOffLine(lines)
                         else:
                             self.dx = 0
