@@ -1,3 +1,8 @@
+# Images and level line coordinates copied from: https://github.com/Code-Bullet/Jump-King/tree/321506e725ef448654936837672d9fe8fba123bb 
+# Specific player acceleration values and movement speeds copied from link above and tweaked to fit the timing of CMU graphics
+# Idea on how to implement collision priority: https://www.youtube.com/watch?v=DmQ4Dqxs0HI
+# Diagonal line collision formula taken from: https://www.jeffreythompson.org/collision-detection/line-line.php 
+
 from cmu_112_graphics import *
 from Line import *
 
@@ -35,8 +40,9 @@ class Player:
         self.termVel = 20
         
         # horizontal physics (i.e. ice and wind stuff)
-        self.maxWind = .3
-        self.windAccel = .003
+        self.maxWind = 6
+        self.windAccel = .3
+        self.windMoveRight = False
         self.iceAccel = .5
         self.isSlidding = False
         self.walkSpeed = 4
@@ -104,7 +110,16 @@ class Player:
                 elif(self.moveLeft):
                     self.dx -= self.iceAccel  
                     
-        self.checkMoveOffLine(lines)                  
+        self.checkMoveOffLine(lines)
+        
+    def applyWind(self):
+        if not(self.onGround):
+            if(self.windMoveRight):
+                self.dx = min(self.dx + self.windAccel, self.maxWind)
+            else:
+                self.dx = max(self.dx - self.windAccel, -self.maxWind)
+        else:
+            pass
             
     # TODO paste citation stuff and continue work on collision
     # ! work on it
@@ -333,7 +348,8 @@ class Player:
                         # snap the right of the player to the line
                         self.cx = vert.x1 - self.width
                     
-                    return hori
+                    if(hori != None):
+                        return hori
             
             # if correction variables are still None because the top corners haven't collided
             if(correctX != None and correctY != None):
@@ -367,16 +383,17 @@ class Player:
                             self.cx = vert.x1 - self.width
                         
                         # regardless of hitting left/right if we're not moving left or right hori line has priority
-                        return hori
+                        if(hori != None):
+                            return hori
             
             # make sure that both the correction variables aren't still None
             if(correctX != None and correctY != None):
                 # check whether the x/y correction is greater than the other
                 # whichever one is lesser we should return the line that causes
                 # that correction
-                if(correctX > correctY and not correctY < 1):
+                if(correctX > correctY and not correctY < 1 and hori != None):
                     return hori
-                elif(correctX < correctY and not correctX < 1):
+                elif(correctX < correctY and not correctX < 1 and vert != None):
                     return vert
         
         # if there's ever a diagonal line then return whatever other line that's present
@@ -384,8 +401,12 @@ class Player:
             diagMid = (diag.y1 + diag.y2) / 2
             if(diagMid > hori.y1):
                 return hori
+            else:
+                return diag
         elif(vert != None and diag != None):
             return vert
+        elif(vert == None and hori == None):
+            return diag
     
     def reactCollide(self, lines, level):        
         # player sides midpoints
@@ -416,6 +437,8 @@ class Player:
         
         # * Reactions are below here
         for line in lines:
+            if(line == None):
+                continue
             # check if it's horizontal
             if(line.isHorizontal):
                 # if so, check if the left and right side of the player is within the 

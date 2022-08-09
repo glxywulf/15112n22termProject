@@ -1,3 +1,8 @@
+# Images and level line coordinates copied from: https://github.com/Code-Bullet/Jump-King/tree/321506e725ef448654936837672d9fe8fba123bb 
+# Specific player acceleration values and movement speeds copied from link above and tweaked to fit the timing of CMU graphics
+# Idea on how to implement collision priority: https://www.youtube.com/watch?v=DmQ4Dqxs0HI
+# Diagonal line collision formula taken from: https://www.jeffreythompson.org/collision-detection/line-line.php 
+
 from cmu_112_graphics import *
 from Line import *
 from Player import *
@@ -21,9 +26,8 @@ def appStarted(app):
     # ? Also you prolly have to edit each one of the lines in order to make sure y1 < y2
     app.level = 0
     
-    # * test diagonal lines
-    # app.levelLines.gameLevelList[app.level - 1].append(Line(320,460,520,660))
-    # app.levelLines.gameLevelList[app.level - 1].append(Line(400,625,600,425))
+    # * time stuff test
+    app.time = 0
     
     # * test image stuffs
     app.bgrdImage = app.loadImage('lvlImages/1.png')
@@ -98,7 +102,9 @@ def keyReleased(app, event):
 def timerFired(app):
     # * test image stuff
     app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
-    
+
+    app.time += app.timerDelay
+        
     if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
         if(app.player.changeLevel()[0]):
             if(app.player.changeLevel()[1] == -1):
@@ -110,11 +116,16 @@ def timerFired(app):
                 
         if(app.levelLines.gameLevelList[app.level].isIce):
             app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
+                    
+        if(app.levelLines.gameLevelList[app.level].isWind):
+            if(app.time % 500 == 0):
+                app.player.windMoveRight = not app.player.windMoveRight
+                app.time = 0
+            app.player.applyWind()
             
         app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
-        
-        app.player.movePlayer(app.levelLines.gameLevelList[app.level], app.levelLines.gameLevelList[app.level].lines)
-    
+        app.player.movePlayer(app.levelLines.gameLevelList[app.level], app.levelLines.gameLevelList[app.level].lines)        
+
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
