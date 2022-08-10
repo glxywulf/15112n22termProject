@@ -23,14 +23,12 @@ def appStarted(app):
     # keep track of all the lines
     app.levelLines = LevelSetup()
     
-    # test first level stuff
-    # ? Also you prolly have to edit each one of the lines in order to make sure y1 < y2
+    # level variable
     app.level = 0
     
-    # * time stuff test
+    # time variable
     app.time = 0
     
-    # * test image stuffs; work on putting it all in
     # image stuff
     app.bgrdImage = app.loadImage('lvlImages/1.png')
     app.avatar = app.loadImage('playerStuff/idle.png')
@@ -134,37 +132,48 @@ def keyReleased(app, event):
             app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1}.png')
     
 
-def timerFired(app):        
-    if(app.level >= 0 and app.level < len(app.levelLines.gameLevelList)):
-        if(app.player.changeLevel()[0]):
-            app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1 + app.player.changeLevel()[1]}.png')
-             
-            if(app.player.changeLevel()[1] == -1):
-                app.level += app.player.changeLevel()[1]
-                app.player.cy = 0 - app.player.height
-            elif(app.player.changeLevel()[1] == +1):
-                app.level += app.player.changeLevel()[1]
-                app.player.cy = app.height
-                
-        if(app.levelLines.gameLevelList[app.level].isIce):
-            app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
-                    
-        if(app.levelLines.gameLevelList[app.level].isWind):
-            app.time += app.timerDelay
-            if(app.time % 500 == 0):
-                app.player.windMoveRight = not app.player.windMoveRight
-                app.time = 0
-            app.player.applyWind()
+def timerFired(app):
+    # if the level should change
+    if(app.player.changeLevel()[0]):
+        # update the background image
+        app.bgrdImage = app.loadImage(f'lvlImages/{app.level + 1 + app.player.changeLevel()[1]}.png')
+        
+        # check if we're going up a level or down one level and place the player correctly
+        if(app.player.changeLevel()[1] == -1):
+            app.level += app.player.changeLevel()[1]
+            app.player.cy = 0 - app.player.height
+        elif(app.player.changeLevel()[1] == +1):
+            app.level += app.player.changeLevel()[1]
+            app.player.cy = app.height
+    
+    # if the level is an ice level lines should react like ice
+    if(app.levelLines.gameLevelList[app.level].isIce):
+        app.player.applyIce(app.levelLines.gameLevelList[app.level].lines)
+    
+    # if the level has wind, activate the wind
+    if(app.levelLines.gameLevelList[app.level].isWind):
+        # add to a temp time variable each time timer fires
+        app.time += app.timerDelay
+        
+        # if app.time reaches 500 then the wind should switch directions
+        # and reset app.time to 0
+        if(app.time % 500 == 0):
+            app.player.windMoveRight = not app.player.windMoveRight
+            app.time = 0
             
-        app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
-        app.player.movePlayer(app.levelLines.gameLevelList[app.level], app.levelLines.gameLevelList[app.level].lines)        
+        # apply wind physics to the player
+        app.player.applyWind()
+    
+    # check collisions and move the player based on the current level
+    app.player.checkCollisions(app.levelLines.gameLevelList[app.level].lines, app.levelLines.gameLevelList[app.level])
+    app.player.movePlayer(app.levelLines.gameLevelList[app.level], app.levelLines.gameLevelList[app.level].lines)        
 
 # View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def redrawAll(app, canvas):
     # lines and stuff
-    # for line in app.levelLines.gameLevelList[app.level].lines:
-    #     line.drawLine(app, canvas)
+    for line in app.levelLines.gameLevelList[app.level].lines:
+        line.drawLine(app, canvas)
     
     # * test image stuff
     canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')

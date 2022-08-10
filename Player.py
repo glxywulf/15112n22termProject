@@ -36,7 +36,7 @@ class Player:
         self.minVertJump = 5
         self.maxVertJump = 22
         self.vertJumpSpeed = self.minVertJump
-        self.gravity = .6 # tweak this
+        self.gravity = .6 
         self.horiJumpSpeed = 8
         self.termVel = 20
         
@@ -47,10 +47,10 @@ class Player:
         self.iceAccel = .5
         self.isSlidding = False
         self.walkSpeed = 4
-        
+    
+    # draw the player
     def drawPlayer(self, app, canvas):
-        # draw the player
-        # TODO eventually insert the actual player model from the game
+        # TODO work on sprite animation
         if not(self.squatting):
             canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
                                 image = ImageTk.PhotoImage(app.avatar), anchor = 's')
@@ -65,12 +65,11 @@ class Player:
     
     # apply the deltas to the players center point
     def movePlayer(self, level, lines):
-        if(level.isIce):
-            self.applyIce(lines)
-        
+        # move the positional coords according to the deltas
         self.cx += self.dx
         self.cy += self.dy
         
+        # no matter what apply gravity as the player moves
         self.applyGravity()
         
     # apply gravity on the player. finished initial velocity
@@ -82,45 +81,47 @@ class Player:
         # otherwise, set dy to 0
         else:
             self.dy = 0
-            
-    # ! Still working on this
+    
+    # apply ice physics to ice levels
     def applyIce(self, lines):
+        # if player is on the ground and not moving
         if(self.onGround and not self.isMoving):
+            # set slidding to True
             self.isSlidding = True
             
+            # depending on moving left or right add the deceleration in the opposite direction
             if(self.dx < 0):
                 self.dx += self.iceAccel
             elif(self.dx > 0):
                 self.dx -= self.iceAccel
             
+            # if the dx gets small enough just set it back to 0
             if(self.dx < .1 and self.dx > -.1):
                 self.dx = 0
-                
+        
+        # tries to accelerate player when on the ice. 
         elif(self.onGround and self.isMoving):
             if(self.dx < 4 and self.dx > -4):
                 if(self.moveRight):
                     self.dx += self.iceAccel
                 elif(self.moveLeft):
                     self.dx -= self.iceAccel  
-                    
-        self.checkMoveOffLine(lines)
         
+        # check if we've moved off the line and act accordingly
+        self.checkMoveOffLine(lines)
+    
+    # apply wind physics to player
     def applyWind(self):
+        # if player isn't on the ground
         if not(self.onGround):
+            # check what direction the wind is pushing at the moment and add to 
+            # the dx in a accelerating fashion
             if(self.windMoveRight):
                 self.dx = min(self.dx + self.windAccel, self.maxWind)
             else:
                 self.dx = max(self.dx - self.windAccel, -self.maxWind)
-        else:
-            pass
-            
-    # TODO paste citation stuff and continue work on collision
-    # ! work on it
-        
-    # ok so, we have a different plan now. still relatively working along the 
-    # same concept maybe but we'll just tinker around with it. I know this has 
-    # made you waste like 2 days but shhhhhhhh i think this will work
-    
+                    
+    # checks the collisions and causes reactions 
     def checkCollisions(self, lines, level):
         
         # get the lines we've collided with
@@ -176,7 +177,6 @@ class Player:
 
     # function to check if lines are colliding with each other based on points
     # of lines and points of player using some math formulas
-    # TODO paste citation stuff
     def checkDiagLine(self, x1, y1, x2, y2, x3, y3, x4, y4):  
         uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))      
         uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
@@ -210,17 +210,26 @@ class Player:
         # if neither are true just jump with no horizontal velocity
         else:
             self.dx = 0
-            
+    
+    # helper function to help check whether or not we should change the level
+    # returns a boolean and int in a list which holds whether or not there should
+    # be a level change and whether it's to the next/previous level
     def changeLevel(self):
+        # if the bottom of the player is above the top of the window, go to the next level
         if(self.cy + self.height < 0):
             return [True, +1]
-        elif(self.cy > 850 and self.dy > 0):
+        
+        # or if the top of the player reaches the bottom of the screen, go to the previous level
+        elif(self.cy > 900 and self.dy > 0):
             return [True, -1]
+        
+        # otherwise just do nothing
         else:
             return [False, 0]
-        
+    
+    # get the lines that the player has collided with
     def getCollidedLines(self, lines):
-        
+        # list of collided lines
         collidedWith = []
         
         # player sides midpoints
@@ -249,35 +258,52 @@ class Player:
         bRx = self.cx + self.width
         bRy = self.cy + self.height
         
+        # check every line in the level
         for line in lines:
+            # if the line is horizontal
             if(line.isHorizontal):
+                # check if the player is within the X and Y of the line
                 if((leftX >= line.x1 and leftX <= line.x2) or (rightX >= line.x1 and rightX <= line.x2) or (line.x1 >= leftX and line.x2 <= rightX)):
+                    # check if the bottom collided with the line that's within range
                     if(line.y1 < bottomY and (line.y1 > rightY or line.y1 > leftY)):
                         collidedWith.append(line)
+                    
+                    # check if the top collided with the line that's within range
                     if(line.y1 > topY and (line.y1 < rightY or line.y1 < leftY)):
                         collidedWith.append(line)
+                
+                # if we aren't in range, call checkMoveOffLine
                 else:
                     self.checkMoveOffLine(lines)
+                    
+            # if the line is vertical
             elif(line.isVertical):
+                # check if we're within X and Y range of the line
                 if((topY > line.y1 and topY < line.y2) or (bottomY > line.y1 and bottomY < line.y2) or (line.y1 >= topY and line.y2 <= bottomY)):
+                    # check if the right or left of the player has come into contact with the line
+                    # if so, add them to the list of collided lines
                     if(line.x1 < rightX and (line.x1 > topX or line.x1 > bottomX)):
                         collidedWith.append(line)
                     elif(line.x1 > leftX and (line.x1 < topX or line.x1 < bottomX)):
                         collidedWith.append(line)
+            
+            # if the line is diagonal
             else:
+                # check if any side of the player comes into contact with the diagonal line
                 left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
                 right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
                 top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)
                 bottom = self.checkDiagLine(bLx, bLy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
                 
+                # if any are True then add it to collided lines
                 if(left[0] or right[0] or top[0] or bottom[0]):
                     collidedWith.append(line)
                             
         return collidedWith
     
     # ! So priority works most of the time. If I ever come back to work on this 
-    # ! project again, this'll be a thing I need to fine tune. But for the sake
-    # ! of now, it's fine.
+    # ! project again, this'll be a thing I need to fine tune. 
+    # get the line we should collide with if we come into contact with >= 2 lines
     def getPriority(self, lines):
         
         # find out what kind of lines you've bumped into
@@ -285,6 +311,7 @@ class Player:
         vert = None
         diag = None
         
+        # check what kind of lines they are
         for line in lines:
             if(line.isHorizontal):
                 hori = line
@@ -396,11 +423,16 @@ class Player:
                 return hori
             else:
                 return diag
+            
+        # vertical lines have priority over diagonal lines
         elif(vert != None and diag != None):
             return vert
+        
+        # if there are only diagonal lines just return the diagonal line
         elif(vert == None and hori == None):
             return diag
     
+    # defines how the player should react to all three types of lines
     def reactCollide(self, lines, level):        
         # player sides midpoints
         leftX = self.cx
@@ -444,20 +476,21 @@ class Player:
                         self.onGround = True
                         self.cy = line.y1 - self.height
                         
-                        # TODO Implement the level status effects here. Since this is 
-                        # TODO after we've snapped the player to the line and before we
-                        # TODO begin changing the player's deltas
-                        
+                        # if we're jumping left or right and we've landed, set
+                        # jumpRight/Left to False and snap the player to the line
                         if(self.jumpLeft):
                             self.jumpLeft = False
                             self.cy = line.y1 - self.height
                         elif(self.jumpRight):
                             self.jumpRight = False
                             self.cy = line.y1 - self.height
-                            
+                        
+                        # if the level is an ice level apply ice physics to the line
                         if(level.isIce):
                             self.applyIce(lines)
                             self.checkMoveOffLine(lines)
+                        
+                        # if it's not an ice level than just set deltas to 0
                         else:
                             self.dx = 0
                             self.dy = 0
@@ -468,6 +501,7 @@ class Player:
                         self.cy = line.y1
                         self.dy = -self.dy
                         
+                        # set jump directions to false
                         if(self.jumpLeft):
                             self.jumpLeft = False
                         elif(self.jumpRight):
@@ -504,10 +538,10 @@ class Player:
                         else:
                             self.cx = line.x2
                             self.dx = -(self.dx / 2)
-
-            # TODO figure out how to do diagonal sorting
-            # ? take into consideration corner point to diagonal line point thing prof mentioned
+            
+            # diagonal line collision
             else:
+                # check what sides are in contact with the diagonal
                 left = self.checkDiagLine(tLx, tLy, bLx, bLy, line.x1, line.y1, line.x2, line.y2)
                 right = self.checkDiagLine(tRx, tRy, bRx, bRy, line.x1, line.y1, line.x2, line.y2)
                 top = self.checkDiagLine(tLx, tLy, tRx, tRy, line.x1, line.y1, line.x2, line.y2)

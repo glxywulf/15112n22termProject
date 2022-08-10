@@ -24,13 +24,13 @@ class Line:
             self.x2 = max(x1, x2)
             self.y2 = max(y1, y2)
         
-        # if it's horizontal we want to keep the order that it was inputted in
+        # if it's diagonal we want to keep the order that it was inputted in
         else:
             self.x1 = x1
             self.y1 = y1
             self.x2 = x2
             self.y2 = y2
         
-                
+    # Line class function which helps to just draw the line
     def drawLine(self, app, canvas):
         canvas.create_line(self.x1, self.y1, self.x2, self.y2, width = 3)
