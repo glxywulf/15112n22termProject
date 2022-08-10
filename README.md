@@ -11,6 +11,3 @@ you have to utilize the wind and jumps to make it higher.
 A couple debugging tools include the use of the 'r' and 'n' keys on the keyboard.
 'r' will reset the app to it's initial state and 'n' will skip the current level 
 and move on to the next level. 
-
-Note that using the 'n' key will likely cause a lot of unintentional glitches so
-avoid using it at all. 

@@ -1,4 +1,5 @@
 # Images and level line coordinates copied from: https://github.com/Code-Bullet/Jump-King/tree/321506e725ef448654936837672d9fe8fba123bb 
+# Image loading code from: https://www.cs.cmu.edu/~112/notes/notes-animations-part4.html
 # Specific player acceleration values and movement speeds copied from link above and tweaked to fit the timing of CMU graphics
 # Idea on how to implement collision priority: https://www.youtube.com/watch?v=DmQ4Dqxs0HI
 # Diagonal line collision formula taken from: https://www.jeffreythompson.org/collision-detection/line-line.php 
@@ -40,8 +41,8 @@ class Player:
         self.termVel = 20
         
         # horizontal physics (i.e. ice and wind stuff)
-        self.maxWind = 6
-        self.windAccel = .3
+        self.maxWind = 8
+        self.windAccel = .4
         self.windMoveRight = False
         self.iceAccel = .5
         self.isSlidding = False
@@ -51,19 +52,11 @@ class Player:
         # draw the player
         # TODO eventually insert the actual player model from the game
         if not(self.squatting):
-            canvas.create_rectangle(self.cx, 
-                                    self.cy,
-                                    self.cx + self.width, 
-                                    self.cy + self.height,
-                                    fill = 'red')
-            # canvas.create_image(self.cx + self.width / 2, self.cy + self.height, 
-            #                     image = ImageTk.PhotoImage(app.avatar), anchor = 's')
+            canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                image = ImageTk.PhotoImage(app.avatar), anchor = 's')
         else:
-            canvas.create_rectangle(self.cx,
-                                    self.cy + (self.height / 2),
-                                    self.cx + self.width,
-                                    self.cy + self.height,
-                                    fill = 'red')
+            canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                image = ImageTk.PhotoImage(app.squatAva), anchor = 's')
         
     # just a helper to set the player's deltas via keyPressed
     def setDeltas(self, dx, dy):
