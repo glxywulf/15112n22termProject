@@ -35,23 +35,6 @@ def appStarted(app):
     app.invAva = app.avatar.transpose(Image.FLIP_LEFT_RIGHT)
     app.squatAva = app.loadImage('playerStuff/squat.png')
     
-    # wind stuff
-    
-    app.snow = []
-    app.snow1 = app.loadImage('windStuff/snow1.png')
-    app.snow2 = app.loadImage('windStuff/snow2.png')
-    app.snow3 = app.loadImage('windStuff/snow3.png')
-    
-    app.snow.append(app.snow1)
-    app.snow.append(app.snow2)
-    app.snow.append(app.snow3)
-    
-    app.invSnow = []
-    for inv in app.snow:
-        app.invSnow.append(inv.transpose(Image.FLIP_LEFT_RIGHT))
-    
-    app.currWind = 0
-    
     # sprite animation stuff
     app.sprites = []
     app.sprite1 = app.loadImage('playerStuff/run1.png')
