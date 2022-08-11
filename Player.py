@@ -30,11 +30,12 @@ class Player:
         self.isMoving = False
         self.moveLeft = False
         self.moveRight = False
+        self.faceRight = True
         
         # player physics numbers and stuff
         # vertical physics (i.e. gravity)
         self.minVertJump = 5
-        self.maxVertJump = 22
+        self.maxVertJump = 23
         self.vertJumpSpeed = self.minVertJump
         self.gravity = .6 
         self.horiJumpSpeed = 8
@@ -47,16 +48,56 @@ class Player:
         self.iceAccel = .5
         self.isSlidding = False
         self.walkSpeed = 4
-    
+        
     # draw the player
     def drawPlayer(self, app, canvas):
         # TODO work on sprite animation
-        if not(self.squatting):
-            canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
-                                image = ImageTk.PhotoImage(app.avatar), anchor = 's')
-        else:
-            canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
-                                image = ImageTk.PhotoImage(app.squatAva), anchor = 's')
+        if(self.isMoving and self.onGround):
+            if(self.faceRight):
+                sprite = app.sprites[app.currSprite]
+                canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                    image = ImageTk.PhotoImage(sprite), anchor = 's')
+            else:
+                sprite = app.invSprites[app.currSprite]
+                canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                    image = ImageTk.PhotoImage(sprite), anchor = 's')
+        elif(self.onGround and not self.isMoving):
+            if not(self.squatting):
+                if(self.faceRight):
+                    canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                        image = ImageTk.PhotoImage(app.avatar), anchor = 's')
+                else:
+                    canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                        image = ImageTk.PhotoImage(app.invAva), anchor = 's')
+            else:
+                canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                    image = ImageTk.PhotoImage(app.squatAva), anchor = 's')
+        
+        elif not(self.onGround):
+            if(self.faceRight and self.dx < 0):
+                canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                    image = ImageTk.PhotoImage(app.avaBump), anchor = 's')
+            elif(not self.faceRight and self.dx > 0):
+                canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                    image = ImageTk.PhotoImage(app.invBump), anchor = 's')
+            else:
+                if(self.faceRight):
+                    if(self.dy < 0):
+                        canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                            image = ImageTk.PhotoImage(app.avaJump), anchor = 's')
+                    else:
+                        canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                            image = ImageTk.PhotoImage(app.avaFall), anchor = 's')
+                else:
+                    if(self.dy < 0):
+                        canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                            image = ImageTk.PhotoImage(app.invJump), anchor = 's')
+                    else:
+                        canvas.create_image(self.cx + self.width / 2, self.cy + self.height + 1, 
+                                            image = ImageTk.PhotoImage(app.invFall), anchor = 's')
+                    
+
+
         
     # just a helper to set the player's deltas via keyPressed
     def setDeltas(self, dx, dy):
