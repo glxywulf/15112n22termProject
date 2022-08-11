@@ -1,3 +1,12 @@
+This is my Python recreation of the video game Jump King, implemented with most,
+if not all, of the features from the game. It is aptly named Jump 112 as it is
+my submission for the CMU 15-112 Term Project for the N22 semester.
+
+As stated, this is a recreation of the game, Jump King, which utilizes Python
+and the CMU 112 graphics package. The aim of the game is to try and reach the 
+top of the game by jumping through an ellaborate obstacle course with the danger
+of losing all of one's progress if they misstep.
+
 Download all of the files and run the Main.py file. Main controls for movement 
 are the right and left arrow keys. Jumping is triggered by the space key. 
 
