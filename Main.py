@@ -35,6 +35,8 @@ def appStarted(app):
     app.invAva = app.avatar.transpose(Image.FLIP_LEFT_RIGHT)
     app.squatAva = app.loadImage('playerStuff/squat.png')
     
+    # wind stuff
+    
     app.snow = []
     app.snow1 = app.loadImage('windStuff/snow1.png')
     app.snow2 = app.loadImage('windStuff/snow2.png')
@@ -209,12 +211,7 @@ def timerFired(app):
         if(app.time % 500 == 0):
             app.player.windMoveRight = not app.player.windMoveRight
             app.time = 0
-            
-        if(app.player.windMoveRight):
-            app.currWind = (1 + app.currWind) % len(app.snow)
-        else:
-            app.currWind = (1 + app.currWind) % len(app.snow)
-            
+                        
         # apply wind physics to the player
         app.player.applyWind()
     
@@ -231,13 +228,7 @@ def redrawAll(app, canvas):
     
     # background
     canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.bgrdImage), anchor = 'nw')
-    
-    if(app.levelLines.gameLevelList[app.level].isWind):
-        if(app.player.windMoveRight):
-            canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.snow[app.currWind]), anchor = 'nw')
-        else:
-            canvas.create_image(0, 0, image = ImageTk.PhotoImage(app.invSnow[app.currWind]), anchor = 'nw')
-    
+        
     app.player.drawPlayer(app, canvas)
     
     
